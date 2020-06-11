@@ -172,6 +172,7 @@ def get_pr_comments():
                 pullRequests(first: 20) {{
                     nodes {{
                         resourcePath
+                        number
                         createdAt
                         comments(first: 20) {{
                           nodes {{
@@ -220,8 +221,9 @@ def get_pr_comments():
                 process_comment(review)
                 for review_comment in review['comments']['nodes']:
                     process_comment(review_comment)
-            comment_counts.append(
-                [pr['resourcePath'], pr['createdAt'], total_comments]
+            comment_counts.append([
+                pr['resourcePath'], pr['number'], 
+                pr['createdAt'], total_comments]
             )
 
     comment_counts = []
@@ -234,7 +236,7 @@ def get_pr_comments():
 
     with open('pr_comment_counts.csv', 'w', newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["pr_path", "created", "total_comments"])
+        writer.writerow(["pr_path", "pr_number", "created", "total_comments"])
         writer.writerows(comment_counts)
 
     with open('pr_comments.csv', 'w', newline="") as f:
@@ -248,7 +250,7 @@ def main():
     # get_intern_repos()
 
     # Uncomment below to get new comments from pull requests.
-    # get_pr_comments()
+    get_pr_comments()
 
 
 if __name__ == "__main__":

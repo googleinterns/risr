@@ -958,6 +958,24 @@ private static final String COMMENT = ""Comment"";
 /talvarez0507/my-portfolio/pull/2#discussion_r437752140,2020-06-09T22:14:34Z,talvarez0507,Done. 
 /talvarez0507/my-portfolio/pull/2#discussion_r437752160,2020-06-09T22:14:38Z,talvarez0507,Done.
 /talvarez0507/my-portfolio/pull/2#discussion_r437752213,2020-06-09T22:14:46Z,talvarez0507,Done. 
+/talvarez0507/my-portfolio/pull/3#pullrequestreview-429081548,2020-06-11T16:24:09Z,jamesnam-google,"I left some comments. Also, there are additional lines that need to be removed. Can you take a look at the code change and see whether there are lines that should be removed?"
+/talvarez0507/my-portfolio/pull/3#discussion_r438913946,2020-06-11T16:24:09Z,jamesnam-google,Should we remove this system print line?
+/talvarez0507/my-portfolio/pull/3#discussion_r438914112,2020-06-11T16:24:25Z,jamesnam-google,Can we have these lines sorted?
+/talvarez0507/my-portfolio/pull/3#discussion_r438914278,2020-06-11T16:24:40Z,jamesnam-google,Can we have these lines sorted?
+/talvarez0507/my-portfolio/pull/3#discussion_r438914394,2020-06-11T16:24:51Z,jamesnam-google,Need a line break above
+/talvarez0507/my-portfolio/pull/3#discussion_r438914520,2020-06-11T16:25:02Z,jamesnam-google,Excessive indentation 
+/talvarez0507/my-portfolio/pull/3#discussion_r438914568,2020-06-11T16:25:07Z,jamesnam-google,Can we have these lines sorted?
+/talvarez0507/my-portfolio/pull/3#discussion_r438914970,2020-06-11T16:25:40Z,jamesnam-google,Excessive indentation 
+/talvarez0507/my-portfolio/pull/3#discussion_r438915053,2020-06-11T16:25:49Z,jamesnam-google,Need spaces around +
+/talvarez0507/my-portfolio/pull/3#discussion_r438915267,2020-06-11T16:26:08Z,jamesnam-google,Unnecessary line break 
+/talvarez0507/my-portfolio/pull/3#discussion_r438915721,2020-06-11T16:26:54Z,jamesnam-google,Need space around ===. Here and below.
+/talvarez0507/my-portfolio/pull/3#discussion_r438915876,2020-06-11T16:27:09Z,jamesnam-google,Need space around ===. Here and below.
+/talvarez0507/my-portfolio/pull/3#discussion_r438915971,2020-06-11T16:27:19Z,jamesnam-google,Excessive indentation
+/talvarez0507/my-portfolio/pull/3#discussion_r438916274,2020-06-11T16:27:47Z,jamesnam-google,i++;
+/talvarez0507/my-portfolio/pull/3#discussion_r438916423,2020-06-11T16:28:01Z,jamesnam-google,Period at the end
+/talvarez0507/my-portfolio/pull/3#discussion_r438916680,2020-06-11T16:28:27Z,jamesnam-google,Unnecessary line break
+/talvarez0507/my-portfolio/pull/3#discussion_r438916778,2020-06-11T16:28:36Z,jamesnam-google,less than 0
+/talvarez0507/my-portfolio/pull/3#discussion_r438916995,2020-06-11T16:28:57Z,jamesnam-google,Remove
 /kpatterson01/STEP-portfolio-1/pull/1#pullrequestreview-415355953,2020-05-20T13:50:38Z,meritus,"Great, looks like you've got a hang of the github review flow."
 /kpatterson01/STEP-portfolio-1/pull/3#pullrequestreview-419403448,2020-05-27T16:30:39Z,meritus,LGTM
 /kpatterson01/STEP-portfolio-1/pull/4#pullrequestreview-420073073,2020-05-28T12:50:28Z,DeanAlvarez,LGTM
@@ -8391,6 +8409,11 @@ And for the private static final request parameter names: okay, I see what you m
 /Sherry2001/step/pull/8#discussion_r438534332,2020-06-11T04:21:06Z,Alfredhgoog,Use === instead of == to avoid unintended type coercion. 
 /Sherry2001/step/pull/8#discussion_r438553705,2020-06-11T05:40:42Z,Sherry2001,yes!
 /Sherry2001/step/pull/8#discussion_r438600409,2020-06-11T07:40:41Z,Sherry2001,oh yes! okay!
+/Sherry2001/step/pull/8#discussion_r438908073,2020-06-11T16:15:07Z,ricazhang,+newline
+/Sherry2001/step/pull/8#discussion_r438908328,2020-06-11T16:15:31Z,ricazhang,please remove all the debug print statements
+/Sherry2001/step/pull/8#discussion_r438908593,2020-06-11T16:15:54Z,ricazhang,-newline?
+/Sherry2001/step/pull/8#discussion_r438909446,2020-06-11T16:17:10Z,ricazhang,"I don't think placeholder works for input type file, feel free to remove it. I think actually changing the default text would require more work"
+/Sherry2001/step/pull/8#discussion_r438913016,2020-06-11T16:22:33Z,ricazhang,"There are certain situations where it makes sense to return the HTML template from the backend. I think with this particular setup, it would make more sense to return a status from the server, then use that status to decide which element to show."
 /RolandNaijuka/step_internship_portfolio/pull/3#issuecomment-636049133,2020-05-29T15:54:56Z,RolandNaijuka,"> Do you have a demo link we could go to? :)
 > 
 > Code looks great!
@@ -11438,6 +11461,8 @@ I'm not sure why you need to check that it's not in the datastore. You're not co
 /nabil-dbz/my-portfolio/pull/9#discussion_r438828592,2020-06-11T14:28:48Z,EkkiD,this appears unused?
 /nabil-dbz/my-portfolio/pull/9#discussion_r438851604,2020-06-11T15:01:19Z,EkkiD,"is there a time limit on the upload URL? If the user leaves the browser open for a long time, will it expire?"
 /nabil-dbz/my-portfolio/pull/9#discussion_r438878237,2020-06-11T15:35:57Z,nabil-dbz,"Indeed, I don't use it but VS Code triggers a warning when I don't add it! Should I remove it anyways ?"
+/nabil-dbz/my-portfolio/pull/9#discussion_r438915298,2020-06-11T16:26:11Z,nabil-dbz,"Interesting! I have no idea but I have tried leaving it for more than 45 minutes and it worked!
+"
 /Maryam676/step/pull/4#issuecomment-634945479,2020-05-27T21:17:03Z,Maryam676,https://screenshot.googleplex.com/o4D7mKyhcLz
 /Maryam676/step/pull/8#discussion_r432591727,2020-05-29T16:14:31Z,mdchu,get rid of commented lines
 /Maryam676/step/pull/14#discussion_r436139104,2020-06-05T20:03:50Z,bncollender,"It looks like this same dependency was added here and above, is that needed?"
@@ -13969,6 +13994,7 @@ to remove the need of keeping track of the index and comparing that to `max`, bu
 /tttzach/step/pull/34#discussion_r438839749,2020-06-11T14:44:44Z,gbuenoandrade,Nit: Maybe move these to the top of the file?
 /tttzach/step/pull/34#discussion_r438841134,2020-06-11T14:46:35Z,gbuenoandrade,Nit: Break the line before this `.then` to be consistent with the `then` at line 117
 /tttzach/step/pull/34#discussion_r438845701,2020-06-11T14:53:16Z,gbuenoandrade,I think you no longer need this file?
+/tttzach/step/pull/34#discussion_r438925138,2020-06-11T16:42:52Z,tttzach,"Good call, thanks!"
 /jeward414/my-portfolio/pull/1#discussion_r432718688,2020-05-29T20:26:18Z,Google-JM,"Instead of writing all your style inline, add it to your css file as a class or id and set it on your elements.
 
 **`style.css file`**
