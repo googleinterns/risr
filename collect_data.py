@@ -174,6 +174,8 @@ def get_pr_comments():
                         resourcePath
                         number
                         createdAt
+                        deletions
+                        additions
                         comments(first: 20) {{
                           nodes {{
                             resourcePath
@@ -223,8 +225,9 @@ def get_pr_comments():
                     process_comment(review_comment)
             comment_counts.append([
                 pr['resourcePath'], pr['number'], 
-                pr['createdAt'], total_comments]
-            )
+                pr['createdAt'], total_comments, 
+                pr['deletions'] + pr['additions']
+            ])
 
     comment_counts = []
     comment_list = []
@@ -236,7 +239,10 @@ def get_pr_comments():
 
     with open('pr_comment_counts.csv', 'w', newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["pr_path", "pr_number", "created", "total_comments"])
+        writer.writerow([
+            "pr_path", "pr_number", "created", "total_comments",
+            "pr_lines_changed"
+        ])
         writer.writerows(comment_counts)
 
     with open('pr_comments.csv', 'w', newline="") as f:
