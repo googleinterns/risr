@@ -227,7 +227,6 @@ def get_pr_comments():
     comment_counts = []
     comment_list = []
 
-    # Iterates through all repositories stored in the intern_repos.csv file
     with open('intern_repos.csv', newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:

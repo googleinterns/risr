@@ -2,6 +2,11 @@
 
 RISR is a code analysis and visualization server for STEP internship projects.
 
+To set up the environment:
+    source env/bin/activate
+    pip3 install -r requirements.txt
+    export GITHUB_PAT="YOUR GITHUB PERSONAL ACCESS TOKEN HERE"
+
 ## Source Code Headers
 
 Every file containing source code must include copyright and license
