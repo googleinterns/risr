@@ -51,7 +51,12 @@ def get_repos_after(cursor):
                         createdAt
                         pullRequests {{
                             totalCount
-    }}  }}  }}  }}  }}  }}"""
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     # Modify the search query to include a cursor if necessary.
     after = ""
@@ -64,7 +69,7 @@ def get_repos_after(cursor):
         return ""
 
     for result in results:
-        main.writer.writerow([
+        main.repo_list.append([
             result['node']['owner']['login'],
             result['node']['name'],
             result['node']['createdAt'],
@@ -84,16 +89,19 @@ def main():
         pr_count: The number of pull requests in the repository.
     """
 
+    main.repo_list = []
     cur_cursor = ""
 
+    while True:
+        next_cursor = get_repos_after(cur_cursor)
+        if next_cursor == "":
+            break
+        cur_cursor = next_cursor
+
     with open('data/intern_repos.csv', 'w', newline="") as file:
-        main.writer = csv.writer(file)
-        main.writer.writerow(["owner", "name", "created", "pr_count"])
-        while True:
-            next_cursor = get_repos_after(cur_cursor)
-            if next_cursor == "":
-                break
-            cur_cursor = next_cursor
+        writer = csv.writer(file)
+        writer.writerow(["owner", "name", "created", "pr_count"])
+        writer.writerows(main.repo_list)
 
 
 if __name__ == "__main__":

@@ -43,7 +43,9 @@ def get_pr_comments(name, owner):
                         createdAt
                         author {{
                           login
-                        }} }} }}
+                        }}
+                      }}
+                    }}
                     reviews(first: 20) {{
                         nodes {{
                             resourcePath
@@ -59,7 +61,15 @@ def get_pr_comments(name, owner):
                                     createdAt
                                     author {{
                                         login
-    }}  }}  }}  }}  }}  }}  }}  }}  }}"""
+                                    }}
+                                }}
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     result = run_query(query)
 
@@ -92,10 +102,10 @@ def process_comment(comment):
         if not comment['author']:
             comment['author'] = {"login": "deleted-user"}
 
-        main.writer.writerow([
+        main.comment_list.append(
             [comment['resourcePath'], comment['createdAt'],
              comment['author']['login'], comment['body']]
-        ])
+        )
 
 
 def main():
@@ -113,13 +123,17 @@ def main():
         comment: The text in the comment.
     """
 
-    with open('data/intern_repos.csv', newline='') as in_csv, \
-         open('data/pr_comments.csv', 'w', newline="") as out_csv:
-        reader = csv.DictReader(in_csv)
-        main.writer = csv.writer(out_csv)
-        main.writer.writerow(["comment_path", "created", "author", "comment"])
+    main.comment_list = []
+
+    with open('data/intern_repos.csv', newline='') as file:
+        reader = csv.DictReader(file)
         for row in reader:
             get_pr_comments(row['name'], row['owner'])
+
+    with open('data/pr_comments.csv', 'w', newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["comment_path", "created", "author", "comment"])
+        writer.writerows(main.comment_list)
 
 
 if __name__ == "__main__":

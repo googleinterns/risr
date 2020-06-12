@@ -40,7 +40,6 @@ def get_pr_stats(name, owner):
                     resourcePath
                     number
                     createdAt
-                    closedAt
                     deletions
                     additions
                     comments {{
@@ -51,7 +50,13 @@ def get_pr_stats(name, owner):
                             body
                             comments {{
                                 totalCount
-    }}  }}  }}  }}  }}  }}  }}"""
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     result = run_query(query)
 
@@ -63,10 +68,9 @@ def get_pr_stats(name, owner):
             if review['body'] != "" and review:
                 total_comments += 1
             total_comments += review['comments']['totalCount']
-        main.writer.writerow([
+        main.pr_stats.append([
             pull_request['resourcePath'], pull_request['number'],
-            pull_request['createdAt'], pull_request['closedAt'],
-            total_comments,
+            pull_request['createdAt'], total_comments,
             pull_request['deletions'] + pull_request['additions']
         ])
 
@@ -86,16 +90,20 @@ def main():
         comment: The text in the comment.
     """
 
-    with open('data/intern_repos.csv', newline='') as in_csv, \
-         open('data/pr_stats.csv', 'w', newline='') as out_csv:
-        reader = csv.DictReader(in_csv)
-        main.writer = csv.writer(out_csv)
-        main.writer.writerow([
-            "pr_path", "pr_number", "created", "closed", "total_comments",
-            "pr_lines_changed"
-        ])
+    main.pr_stats = []
+
+    with open('data/intern_repos.csv', newline='') as file:
+        reader = csv.DictReader(file)
         for row in reader:
             get_pr_stats(row['name'], row['owner'])
+
+    with open('data/pr_stats.csv', 'w', newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow([
+            "pr_path", "pr_number", "created", "total_comments",
+            "pr_lines_changed"
+        ])
+        writer.writerows(main.pr_stats)
 
 
 if __name__ == "__main__":
