@@ -14,6 +14,7 @@
 
 """ Module for retrieving pull request statistics. """
 
+
 import csv
 from query import run_query
 
