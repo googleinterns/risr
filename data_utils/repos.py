@@ -51,7 +51,12 @@ def get_repos_after(cursor):
                         createdAt
                         pullRequests {{
                             totalCount
-    }}  }}  }}  }}  }}  }}"""
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     # Modify the search query to include a cursor if necessary.
     after = ""

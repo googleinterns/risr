@@ -59,7 +59,15 @@ def get_pr_comments(name, owner):
                                     createdAt
                                     author {{
                                         login
-    }}  }}  }}  }}  }}  }}  }}  }}  }}"""
+                                    }}
+                                }}
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     result = run_query(query)
 

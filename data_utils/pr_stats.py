@@ -51,7 +51,13 @@ def get_pr_stats(name, owner):
                             body
                             comments {{
                                 totalCount
-    }}  }}  }}  }}  }}  }}  }}"""
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}"""
 
     result = run_query(query)
 
