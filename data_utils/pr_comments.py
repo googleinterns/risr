@@ -37,13 +37,15 @@ def get_pr_comments(name, owner):
             pullRequests(first: 20) {{
                 nodes {{
                     comments(first: 20) {{
-                      nodes {{
-                        resourcePath
-                        body
-                        createdAt
-                        author {{
-                          login
-                        }} }} }}
+                        nodes {{
+                            resourcePath
+                            body
+                            createdAt
+                            author {{
+                                login
+                            }}
+                        }}
+                    }}
                     reviews(first: 20) {{
                         nodes {{
                             resourcePath

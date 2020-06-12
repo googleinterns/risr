@@ -31,8 +31,6 @@ function lintChangedFiles () {
 set -o errexit
 set -o nounset
 
-# This line prevents linter from detecting duplicate code, which is necessary
-# because there are multiple closing brackets across files that look the same.
 SKIP_FOR_TESTS="redefined-outer-name,protected-access,missing-docstring,too-many-lines,len-as-condition"
 SKIP_FOR_SNIPPETS="${SKIP_FOR_TESTS},reimported,unused-variable,unused-import,import-outside-toplevel"
 
