@@ -52,6 +52,5 @@ then
   lintAllFiles "data_utils" ""
 
 else
-  lintChangedFiles "data_utils" ""
-
+  lintChangedFiles "data_utils" "$SKIP_FOR_CODE"
 fi
