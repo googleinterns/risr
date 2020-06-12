@@ -54,5 +54,4 @@ then
 
 else
   lintChangedFiles "data_utils" "$SKIP_FOR_CODE"
-
 fi
