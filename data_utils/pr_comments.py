@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+""" Module for retrieving pull request comments. """
+
 import csv
 from query import run_query
 
@@ -73,10 +75,10 @@ def get_pr_comments(name, owner):
 
     pull_requests = result['data']['repository']['pullRequests']['nodes']
 
-    for pr in pull_requests:
-        for pr_comment in pr['comments']['nodes']:
+    for pull_request in pull_requests:
+        for pr_comment in pull_request['comments']['nodes']:
             process_comment(pr_comment)
-        for review in pr['reviews']['nodes']:
+        for review in pull_request['reviews']['nodes']:
             process_comment(review)
             for review_comment in review['comments']['nodes']:
                 process_comment(review_comment)
@@ -123,13 +125,13 @@ def main():
 
     main.comment_list = []
 
-    with open('data/intern_repos.csv', newline='') as f:
-        reader = csv.DictReader(f)
+    with open('data/intern_repos.csv', newline='') as file:
+        reader = csv.DictReader(file)
         for row in reader:
             get_pr_comments(row['name'], row['owner'])
 
-    with open('data/pr_comments.csv', 'w', newline="") as f:
-        writer = csv.writer(f)
+    with open('data/pr_comments.csv', 'w', newline="") as file:
+        writer = csv.writer(file)
         writer.writerow(["comment_path", "created", "author", "comment"])
         writer.writerows(main.comment_list)
 

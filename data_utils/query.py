@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+""" Module for sending a request to the Github API. """
+
 import os
 import requests
 
@@ -34,13 +36,13 @@ def run_query(query):
     # You can set the environment variable with the following command:
     #     $ export GITHUB_PAT="YOUR GITHUB PERSONAL ACCESS TOKEN HERE"
 
-    GITHUB_PAT = os.getenv('GITHUB_PAT')
+    github_pat = os.getenv('GITHUB_PAT')
 
-    headers = {'Authorization': 'token ' + GITHUB_PAT}
+    headers = {'Authorization': 'token ' + github_pat}
     request = requests.post("https://api.github.com/graphql",
                             headers=headers,
                             json={'query': query})
+    # pylint: disable=no-member
     if request.status_code == requests.codes.ok:
         return request.json()
-    else:
-        raise Exception("Request to Github GraphQL API failed.")
+    raise Exception("Request to Github GraphQL API failed.")

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+""" Module for retrieving pull request statistics. """
+
 import csv
 from query import run_query
 
@@ -59,16 +61,16 @@ def get_pr_stats(name, owner):
 
     pull_requests = result['data']['repository']['pullRequests']['nodes']
 
-    for pr in pull_requests:
-        total_comments = pr['comments']['totalCount']
-        for review in pr['reviews']['nodes']:
+    for pull_request in pull_requests:
+        total_comments = pull_request['comments']['totalCount']
+        for review in pull_request['reviews']['nodes']:
             if review['body'] != "" and review:
                 total_comments += 1
             total_comments += review['comments']['totalCount']
         main.pr_stats.append([
-            pr['resourcePath'], pr['number'],
-            pr['createdAt'], total_comments,
-            pr['deletions'] + pr['additions']
+            pull_request['resourcePath'], pull_request['number'],
+            pull_request['createdAt'], total_comments,
+            pull_request['deletions'] + pull_request['additions']
         ])
 
 
@@ -89,13 +91,13 @@ def main():
 
     main.pr_stats = []
 
-    with open('data/intern_repos.csv', newline='') as f:
-        reader = csv.DictReader(f)
+    with open('data/intern_repos.csv', newline='') as file:
+        reader = csv.DictReader(file)
         for row in reader:
             get_pr_stats(row['name'], row['owner'])
 
-    with open('data/pr_stats.csv', 'w', newline="") as f:
-        writer = csv.writer(f)
+    with open('data/pr_stats.csv', 'w', newline="") as file:
+        writer = csv.writer(file)
         writer.writerow([
             "pr_path", "pr_number", "created", "total_comments",
             "pr_lines_changed"

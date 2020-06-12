@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+""" Module for retrieving intern repositories. """
+
 import csv
 from query import run_query
 
@@ -96,8 +98,8 @@ def main():
             break
         cur_cursor = next_cursor
 
-    with open('data/intern_repos.csv', 'w', newline="") as f:
-        writer = csv.writer(f)
+    with open('data/intern_repos.csv', 'w', newline="") as file:
+        writer = csv.writer(file)
         writer.writerow(["owner", "name", "created", "pr_count"])
         writer.writerows(main.repo_list)
 
