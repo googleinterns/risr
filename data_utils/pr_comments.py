@@ -15,7 +15,7 @@
 import csv
 from query import run_query
 
-    
+
 def get_pr_comments(name, owner):
     """ Gets the pull request comments from a particular repository.
 
@@ -74,7 +74,6 @@ def get_pr_comments(name, owner):
     pull_requests = result['data']['repository']['pullRequests']['nodes']
 
     for pr in pull_requests:
-        total_comments = 0
         for pr_comment in pr['comments']['nodes']:
             process_comment(pr_comment)
         for review in pr['reviews']['nodes']:
@@ -84,27 +83,27 @@ def get_pr_comments(name, owner):
 
 
 def process_comment(comment):
-        """ Helper function to process a comment.
+    """ Helper function to process a comment.
 
-        This function updates the total_comments variable and appends
-        relevant information to the comment_list list.
-        
-        Args:
-            comment: The comment node retrieved from the API.
-        
-        Returns:
-            None.
-        """
+    This function updates the total_comments variable and appends
+    relevant information to the comment_list list.
 
-        if comment['body'] != "" and comment:
-            # For the special case where the author has been deleted
-            if not comment['author']:
-                comment['author'] = {"login": "deleted-user"}
-            
-            main.comment_list.append(
-                [comment['resourcePath'], comment['createdAt'],
-                 comment['author']['login'], comment['body']]
-            )
+    Args:
+        comment: The comment node retrieved from the API.
+
+    Returns:
+        None.
+    """
+
+    if comment['body'] != "" and comment:
+        # For the special case where the author has been deleted
+        if not comment['author']:
+            comment['author'] = {"login": "deleted-user"}
+
+        main.comment_list.append(
+            [comment['resourcePath'], comment['createdAt'],
+             comment['author']['login'], comment['body']]
+        )
 
 
 def main():

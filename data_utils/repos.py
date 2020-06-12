@@ -73,7 +73,7 @@ def get_repos_after(cursor):
             result['node']['createdAt'],
             result['node']['pullRequests']['totalCount']
         ])
-    
+
     return results[-1]['cursor']
 
 
@@ -95,7 +95,7 @@ def main():
         if next_cursor == "":
             break
         cur_cursor = next_cursor
-    
+
     with open('data/intern_repos.csv', 'w', newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["owner", "name", "created", "pr_count"])

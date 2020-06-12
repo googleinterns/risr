@@ -15,7 +15,7 @@
 import csv
 from query import run_query
 
-    
+
 def get_pr_stats(name, owner):
     """ Gets the pull request comments from a particular repository.
 
@@ -66,11 +66,10 @@ def get_pr_stats(name, owner):
                 total_comments += 1
             total_comments += review['comments']['totalCount']
         main.pr_stats.append([
-            pr['resourcePath'], pr['number'], 
-            pr['createdAt'], total_comments, 
+            pr['resourcePath'], pr['number'],
+            pr['createdAt'], total_comments,
             pr['deletions'] + pr['additions']
         ])
-
 
 
 def main():

@@ -14,7 +14,6 @@
 
 import os
 import requests
-import json
 
 
 def run_query(query):
@@ -30,13 +29,13 @@ def run_query(query):
         Exception: An error occurred when sending a request to the Github API.
     """
 
-    # Get the Github Personal Access Token from your local environment, 
-    # since authentication is required to make large requests to the Github API.
+    # Get the Github Personal Access Token from your local environment since
+    # authentication is required to make large requests to the Github API.
     # You can set the environment variable with the following command:
-    #     $ export GITHUB_PAT="YOUR GITHUB PERSONAL ACCESS TOKEN HERE" 
+    #     $ export GITHUB_PAT="YOUR GITHUB PERSONAL ACCESS TOKEN HERE"
 
     GITHUB_PAT = os.getenv('GITHUB_PAT')
-    
+
     headers = {'Authorization': 'token ' + GITHUB_PAT}
     request = requests.post("https://api.github.com/graphql",
                             headers=headers,
