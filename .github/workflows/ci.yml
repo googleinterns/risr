@@ -34,4 +34,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Lint with pylint
-      run: ./lint.sh all
+      run: bash ./lint.sh all
