@@ -103,8 +103,8 @@ def process_comment(comment):
             comment['author'] = {"login": "deleted-user"}
 
         main.writer.writerow([
-            [comment['resourcePath'], comment['createdAt'],
-             comment['author']['login'], comment['body']]
+            comment['resourcePath'], comment['createdAt'],
+            comment['author']['login'], comment['body']
         ])
 
 
