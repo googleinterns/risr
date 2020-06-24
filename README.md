@@ -1,6 +1,7 @@
 # Remote Internship Statistics Research (RISR)
 
 RISR is a code analysis and visualization server for STEP internship projects.
+RISR is an experimental intern project for the summer of 2020.
 This is not an officially supported Google product.
 
 To set up the environment:
