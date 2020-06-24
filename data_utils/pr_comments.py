@@ -16,7 +16,6 @@
 
 import csv
 from query import run_query
-from textblob import TextBlob
 
 
 def get_pr_comments(name, owner):
