@@ -101,18 +101,25 @@ def main():
         return
 
     if repo_type == "starter":
+        # Look for a specific string in a repository README.md file. Results are
+        # sorted according to the date the repository was created.
         repo_query = """\"
-            sort:created-asc
-            in:readme
             git clone https://github.com/googleinterns/step.git
+            in:readme
+            sort:created-asc
         \""""
 
     elif repo_type == "capstone":
+        # Look for repositories that match the string "step 2020" and were
+        # created within the "googleinterns" organization after 06/17/2020.
+        # This query follows the STEP capstone repository naming conventions
+        # and creation dates. Results are sorted according to the date the
+        # repository was created.
         repo_query = """\"
             step 2020
-            sort:created-asc
-            created:>2020-06-17
             org:googleinterns
+            created:>2020-06-17
+            sort:created-asc
         \""""
 
     else:
