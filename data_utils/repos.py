@@ -15,16 +15,19 @@
 """ Module for retrieving intern repositories. """
 
 import csv
+import sys
+import os
 from query import run_query
 
 
-def get_repos_after(cursor):
-    """Gets the first 100 repositories after a cursor.
+def get_repos_after(repo_query, cursor):
+    """Gets the first 100 repositories after a cursor for a given query.
 
     This is necessary because GraphQL uses pagination, so only 100 results
     can be retrieved at one time.
 
     Args:
+        repo_query: A string containing the query to find repositories.
         cursor: A string containing a cursor used for GraphQL pagination.
 
     Returns:
@@ -33,12 +36,11 @@ def get_repos_after(cursor):
     """
 
     query = """{{
-        search(first: 100,
-               {after}
-               query: "sort:created-asc
-                       in:readme
-                       git clone https://github.com/googleinterns/step.git",
-               type: REPOSITORY) {{
+        search(
+            first: 100,
+            {after}
+            query: {repo_query},
+            type: REPOSITORY) {{
             repositoryCount
             edges {{
                 cursor
@@ -62,7 +64,7 @@ def get_repos_after(cursor):
     after = ""
     if cursor != "":
         after = f"""after: "{cursor}","""
-    result = run_query(query.format(after=after))
+    result = run_query(query.format(after=after, repo_query=repo_query))
 
     results = result['data']['search']['edges']
     if not results:
@@ -70,8 +72,7 @@ def get_repos_after(cursor):
 
     for result in results:
         main.writer.writerow([
-            result['node']['owner']['login'],
-            result['node']['name'],
+            result['node']['owner']['login'], result['node']['name'],
             result['node']['createdAt'],
             result['node']['pullRequests']['totalCount']
         ])
@@ -82,20 +83,50 @@ def get_repos_after(cursor):
 def main():
     """Retrieves all the STEP intern repos and stores them in a CSV file.
 
-    intern_repos.csv has the following columns:
+    The intern repos retrieved depend on command line arguments. Repositories
+    of different types are stored in different CSV files. Current supported
+    repository types are "starter" and "capstone".
+
+    <repo_type>_repos.csv has the following columns:
         owner: The STEP intern Github username.
         name: The repository name.
         created: The time and date that the repository was created.
         pr_count: The number of pull requests in the repository.
     """
 
-    cur_cursor = ""
+    try:
+        repo_type = sys.argv[1]
+    except IndexError:
+        print("Usage: repos.py <repository type>")
+        return
 
-    with open('data/intern_repos.csv', 'w', newline="") as file:
+    if repo_type == "starter":
+        repo_query = """\"
+            sort:created-asc
+            in:readme
+            git clone https://github.com/googleinterns/step.git
+        \""""
+
+    elif repo_type == "capstone":
+        repo_query = """\"
+            step 2020
+            sort:created-asc
+            created:>2020-06-17
+            org:googleinterns
+        \""""
+
+    else:
+        print(repo_type, "is an unsupported repository type.")
+        return
+
+    os.makedirs('data', exist_ok=True)
+
+    with open(f'data/{repo_type}_repos.csv', 'w', newline="") as file:
         main.writer = csv.writer(file)
         main.writer.writerow(["owner", "name", "created", "pr_count"])
+        cur_cursor = ""
         while True:
-            next_cursor = get_repos_after(cur_cursor)
+            next_cursor = get_repos_after(repo_query, cur_cursor)
             if next_cursor == "":
                 break
             cur_cursor = next_cursor
