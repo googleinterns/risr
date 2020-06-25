@@ -45,7 +45,13 @@ def run_query(query):
     request = requests.post("https://api.github.com/graphql",
                             headers=headers,
                             json={'query': query})
+
     # pylint: disable=no-member
     if request.status_code == requests.codes.ok:
-        return request.json()
+        result = request.json()
+        if 'errors' in result.keys():
+            raise Exception("There was an error in the Github API query.",
+                            result)
+        return result
+
     raise Exception("Request to Github GraphQL API failed.")

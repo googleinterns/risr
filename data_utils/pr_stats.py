@@ -16,7 +16,9 @@
 
 
 import csv
-from query import run_query
+import os
+import sys
+from data_utils.query import run_query
 
 
 def get_pr_stats(name, owner):
@@ -78,7 +80,11 @@ def get_pr_stats(name, owner):
 
 
 def main():
-    """ Retrieves the comments in pull requests for intern repositories.
+    """ Retrieves pull request statistics for intern repositories.
+
+    The pull requests retrieved depend on command line arguments. Repositories
+    of different types are stored in different CSV files. Current supported
+    repository types are "starter" and "capstone".
 
     pr_comment_counts.csv has the following columns:
         pr_path: The resource path to the pull request.
@@ -92,8 +98,18 @@ def main():
         comment: The text in the comment.
     """
 
-    with open('data/intern_repos.csv', newline='') as in_csv, \
-         open('data/pr_stats.csv', 'w', newline='') as out_csv:
+    try:
+        repo_type = sys.argv[1]
+    except:
+        raise Exception("Usage: pr_stats.py <repository type>")
+
+    repo_csv = f"data/{repo_type}_repos.csv"
+
+    if not os.path.isfile(repo_csv):
+        raise Exception(f"The CSV for {repo_type} repositories does not exist.")
+
+    with open(repo_csv, newline='') as in_csv, \
+         open(f'data/{repo_type}_pr_stats.csv', 'w', newline='') as out_csv:
         reader = csv.DictReader(in_csv)
         main.writer = csv.writer(out_csv)
         main.writer.writerow([

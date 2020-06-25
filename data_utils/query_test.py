@@ -22,19 +22,6 @@ from data_utils import query
 class QueryTest(unittest.TestCase):
     """ Query test class. """
 
-    def test_run_query_repository(self):
-        """ Test to get the googleinterns risr repository. """
-        query_input = """{
-            repository(name: "risr", owner: "googleinterns") {
-                nameWithOwner
-            }
-        }"""
-        name_with_owner = "googleinterns/risr"
-        result = query.run_query(query_input)
-        self.assertFalse('errors' in result.keys())
-        self.assertEqual(result['data']['repository']['nameWithOwner'],
-                         name_with_owner)
-
     def test_run_query_exception(self):
         """ Test to check if exception is raised when environment variable
         for the Github Personal Access Token is not set. """
@@ -46,8 +33,20 @@ class QueryTest(unittest.TestCase):
 
     def test_run_query_error(self):
         """ Test to check if incorrect queries get an error JSON object. """
-        result = query.run_query("")
-        self.assertTrue('errors' in result.keys())
+        with self.assertRaises(Exception):
+            query.run_query("")
+
+    def test_run_query_repository(self):
+        """ Test to get the googleinterns risr repository. """
+        query_input = """{
+            repository(name: "risr", owner: "googleinterns") {
+                nameWithOwner
+            }
+        }"""
+        name_with_owner = "googleinterns/risr"
+        result = query.run_query(query_input)
+        self.assertEqual(result['data']['repository']['nameWithOwner'],
+                         name_with_owner)
 
 
 if __name__ == '__main__':
