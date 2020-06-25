@@ -17,7 +17,7 @@
 import csv
 import sys
 import os
-from query import run_query
+from data_utils.query import run_query
 
 
 def get_repos_after(repo_query, cursor):
@@ -96,9 +96,8 @@ def main():
 
     try:
         repo_type = sys.argv[1]
-    except IndexError:
-        print("Usage: repos.py <repository type>")
-        return
+    except:
+        raise Exception("Usage: repos.py <repository type>")
 
     if repo_type == "starter":
         # Look for a specific string in a repository README.md file. Results are
@@ -117,14 +116,14 @@ def main():
         # repository was created.
         repo_query = """\"
             step 2020
+            in:name
             org:googleinterns
             created:>2020-06-17
             sort:created-asc
         \""""
 
     else:
-        print(repo_type, "is an unsupported repository type.")
-        return
+        raise Exception(repo_type, "is an unsupported repository type.")
 
     os.makedirs('data', exist_ok=True)
 

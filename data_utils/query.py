@@ -38,6 +38,9 @@ def run_query(query):
 
     github_pat = os.getenv('GITHUB_PAT')
 
+    if github_pat is None:
+        raise Exception("GITHUB_PAT environment variable is not set.")
+
     headers = {'Authorization': 'token ' + github_pat}
     request = requests.post("https://api.github.com/graphql",
                             headers=headers,
