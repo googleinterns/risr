@@ -15,10 +15,12 @@
 """ Module for retrieving pull request comments. """
 
 import csv
-from query import run_query
+import os
+import sys
+from data_utils.query import run_query
 
 
-def get_pr_comments(name, owner):
+def get_pr_comments(writer, name, owner):
     """ Gets the pull request comments from a particular repository.
 
     This function processes the results from the Github API query and
@@ -77,11 +79,17 @@ def get_pr_comments(name, owner):
 
     for pull_request in pull_requests:
         for pr_comment in pull_request['comments']['nodes']:
-            process_comment(pr_comment)
+            comment_row = process_comment(pr_comment)
+            if comment_row:
+                writer.writerow(comment_row)
         for review in pull_request['reviews']['nodes']:
-            process_comment(review)
+            comment_row = process_comment(review)
+            if comment_row:
+                writer.writerow(comment_row)
             for review_comment in review['comments']['nodes']:
-                process_comment(review_comment)
+                comment_row = process_comment(review_comment)
+                if comment_row:
+                    writer.writerow(comment_row)
 
 
 def process_comment(comment):
@@ -94,22 +102,26 @@ def process_comment(comment):
         comment: The comment node retrieved from the API.
 
     Returns:
-        None.
+        List of strings that contain the comment data.
     """
 
-    if comment['body'] != "" and comment:
+    if comment and comment['body'] != "":
         # For the special case where the author has been deleted
         if not comment['author']:
             comment['author'] = {"login": "deleted-user"}
 
-        main.writer.writerow([
+        return [
             comment['resourcePath'], comment['createdAt'],
             comment['author']['login'], comment['body']
-        ])
+        ]
 
 
 def main():
     """ Retrieves the comments in pull requests for intern repositories.
+
+    The comments retrieved depend on command line arguments. Repositories
+    of different types are stored in different CSV files. Current supported
+    repository types are "starter" and "capstone".
 
     pr_comment_counts.csv has the following columns:
         pr_path: The resource path to the pull request.
@@ -123,13 +135,24 @@ def main():
         comment: The text in the comment.
     """
 
-    with open('data/intern_repos.csv', newline='') as in_csv, \
-         open('data/pr_comments.csv', 'w', newline="") as out_csv:
+    try:
+        repo_type = sys.argv[1]
+    except:
+        raise Exception("Usage: pr_stats.py <repository type>")
+
+    repo_csv = f"data/{repo_type}_repos.csv"
+
+    if not os.path.isfile(repo_csv):
+        raise Exception(
+            f"The CSV for {repo_type} repositories does not exist.")
+
+    with open(repo_csv, newline='') as in_csv, \
+         open(f'data/{repo_type}_pr_comments.csv', 'w', newline="") as out_csv:
         reader = csv.DictReader(in_csv)
-        main.writer = csv.writer(out_csv)
-        main.writer.writerow(["comment_path", "created", "author", "comment"])
+        writer = csv.writer(out_csv)
+        writer.writerow(["comment_path", "created", "author", "comment"])
         for row in reader:
-            get_pr_comments(row['name'], row['owner'])
+            get_pr_comments(writer, row['name'], row['owner'])
 
 
 if __name__ == "__main__":

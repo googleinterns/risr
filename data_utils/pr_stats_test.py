@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-""" Tests for the repos module. """
+""" Tests for the pr_stats module. """
 
 import csv
 import os
@@ -24,13 +24,13 @@ from data_utils import pr_stats
 class PrStatsTest(unittest.TestCase):
     """ Repos test class. """
 
-    def test_get_capstone_no_args(self):
+    def test_get_stats_no_args(self):
         """ Test to check if missing arguments will raise exception. """
         sys.argv = ['repos.py']
         with self.assertRaises(Exception):
             pr_stats.main()
 
-    def test_get_capstone_no_file(self):
+    def test_get_comments_no_file(self):
         """ Test to check if unsupported arguments will raise exception. """
         sys.argv = ['repos.py', 'repo_type']
         self.assertFalse(os.path.isfile("data/repo_type.csv"))
@@ -38,7 +38,7 @@ class PrStatsTest(unittest.TestCase):
             pr_stats.main()
 
     def test_get_pr_stats(self):
-        """ Test for getting capstone repository PR statistics.
+        """ Test for getting test repository PR statistics.
 
         This test generates a CSV with test repositories and checks if the
         output pull request statistics CSV file is created correctly.
@@ -50,19 +50,21 @@ class PrStatsTest(unittest.TestCase):
             writer = csv.writer(out_csv)
             writer.writerows(test_data)
 
-        if os.path.isfile("data/test_pr_stats.csv"):
-            os.remove("data/test_pr_stats.csv")
-        self.assertFalse(os.path.isfile("data/test_pr_stats.csv"))
+        pr_stats_path = "data/test_pr_stats.csv"
+
+        if os.path.isfile(pr_stats_path):
+            os.remove(pr_stats_path)
+        self.assertFalse(os.path.isfile(pr_stats_path))
 
         sys.argv = ['repos.py', 'test']
         pr_stats.main()
-        self.assertTrue(os.path.isfile("data/test_pr_stats.csv"))
-        with open("data/test_pr_stats.csv") as in_csv:
+        self.assertTrue(os.path.isfile(pr_stats_path))
+        with open(pr_stats_path) as in_csv:
             reader = csv.DictReader(in_csv)
             self.assertGreater(len(list(reader)), 1)
             for row in reader:
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
-        os.remove("data/test_pr_stats.csv")
+        os.remove(pr_stats_path)
         os.remove("data/test_repos.csv")
 
 
