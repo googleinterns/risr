@@ -16,7 +16,7 @@
 
 import os
 import unittest
-from data_utils import query
+import query
 
 
 class QueryTest(unittest.TestCase):

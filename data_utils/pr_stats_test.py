@@ -18,7 +18,7 @@ import csv
 import os
 import sys
 import unittest
-from data_utils import pr_stats
+import pr_stats
 
 
 class PrStatsTest(unittest.TestCase):

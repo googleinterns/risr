@@ -18,7 +18,7 @@ import csv
 import os
 import sys
 import unittest
-from data_utils import pr_comments
+import pr_comments
 
 
 class PrCommentsTest(unittest.TestCase):

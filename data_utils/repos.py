@@ -17,7 +17,7 @@
 import csv
 import sys
 import os
-from data_utils.query import run_query
+from query import run_query
 
 
 def get_repos_after(writer, repo_query, cursor):

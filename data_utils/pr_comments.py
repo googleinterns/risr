@@ -17,7 +17,7 @@
 import csv
 import os
 import sys
-from data_utils.query import run_query
+from query import run_query
 
 
 def get_pr_comments(writer, name, owner):

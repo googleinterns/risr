@@ -18,7 +18,7 @@ import csv
 import os
 import sys
 import unittest
-from data_utils import repos
+import repos
 
 
 class ReposTest(unittest.TestCase):
