@@ -21,7 +21,7 @@ import sys
 from data_utils.query import run_query
 
 
-def get_pr_stats(name, owner):
+def get_pr_stats(writer, name, owner):
     """ Gets the pull request comments from a particular repository.
 
     This function processes the results from the Github API query and
@@ -71,7 +71,7 @@ def get_pr_stats(name, owner):
             if review['body'] != "" and review:
                 total_comments += 1
             total_comments += review['comments']['totalCount']
-        main.writer.writerow([
+        writer.writerow([
             pull_request['resourcePath'], pull_request['number'],
             pull_request['createdAt'], pull_request['closedAt'],
             total_comments,
@@ -111,13 +111,13 @@ def main():
     with open(repo_csv, newline='') as in_csv, \
          open(f'data/{repo_type}_pr_stats.csv', 'w', newline='') as out_csv:
         reader = csv.DictReader(in_csv)
-        main.writer = csv.writer(out_csv)
-        main.writer.writerow([
+        writer = csv.writer(out_csv)
+        writer.writerow([
             "pr_path", "pr_number", "created", "closed", "total_comments",
             "pr_lines_changed"
         ])
         for row in reader:
-            get_pr_stats(row['name'], row['owner'])
+            get_pr_stats(writer, row['name'], row['owner'])
 
 
 if __name__ == "__main__":

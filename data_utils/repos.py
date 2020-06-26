@@ -20,7 +20,7 @@ import os
 from data_utils.query import run_query
 
 
-def get_repos_after(repo_query, cursor):
+def get_repos_after(writer, repo_query, cursor):
     """Gets the first 100 repositories after a cursor for a given query.
 
     This is necessary because GraphQL uses pagination, so only 100 results
@@ -71,7 +71,7 @@ def get_repos_after(repo_query, cursor):
         return ""
 
     for result in results:
-        main.writer.writerow([
+        writer.writerow([
             result['node']['owner']['login'], result['node']['name'],
             result['node']['createdAt'],
             result['node']['pullRequests']['totalCount']
@@ -128,11 +128,11 @@ def main():
     os.makedirs('data', exist_ok=True)
 
     with open(f'data/{repo_type}_repos.csv', 'w', newline="") as file:
-        main.writer = csv.writer(file)
-        main.writer.writerow(["owner", "name", "created", "pr_count"])
+        writer = csv.writer(file)
+        writer.writerow(["owner", "name", "created", "pr_count"])
         cur_cursor = ""
         while True:
-            next_cursor = get_repos_after(repo_query, cur_cursor)
+            next_cursor = get_repos_after(writer, repo_query, cur_cursor)
             if next_cursor == "":
                 break
             cur_cursor = next_cursor
