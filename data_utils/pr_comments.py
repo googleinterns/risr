@@ -115,6 +115,7 @@ def process_comment(comment):
             comment['resourcePath'], comment['createdAt'],
             comment['author']['login'], comment['body']
         ]
+    return None
 
 
 def main():

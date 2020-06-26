@@ -79,14 +79,10 @@ class PrCommentsTest(unittest.TestCase):
     def test_get_pr_comments(self):
         """ Test for getting test repository PR comments.
 
-        This test generates a CSV with test repositories and checks if the
+        This test uses a CSV with test repositories and checks if the
         output pull request comments CSV file is created correctly.
         The generated test files are deleted upon test completion.
         """
-        test_data = [["name", "owner"], ["risr", "googleinterns"]]
-        with open("data/test_repos.csv", "w", newline="") as out_csv:
-            writer = csv.writer(out_csv)
-            writer.writerows(test_data)
 
         pr_comments_path = "data/test_pr_comments.csv"
 
@@ -104,7 +100,6 @@ class PrCommentsTest(unittest.TestCase):
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
         os.remove(pr_comments_path)
-        os.remove("data/test_repos.csv")
 
 
 if __name__ == '__main__':

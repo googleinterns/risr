@@ -40,15 +40,10 @@ class PrStatsTest(unittest.TestCase):
     def test_get_pr_stats(self):
         """ Test for getting test repository PR statistics.
 
-        This test generates a CSV with test repositories and checks if the
+        This test uses a CSV with test repositories and checks if the
         output pull request statistics CSV file is created correctly.
         The generated test files are deleted upon test completion.
         """
-        test_data = [["name", "owner"],
-                     ["risr", "googleinterns"]]
-        with open("data/test_repos.csv", "w", newline="") as out_csv:
-            writer = csv.writer(out_csv)
-            writer.writerows(test_data)
 
         pr_stats_path = "data/test_pr_stats.csv"
 
@@ -65,7 +60,6 @@ class PrStatsTest(unittest.TestCase):
             for row in reader:
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
         os.remove(pr_stats_path)
-        os.remove("data/test_repos.csv")
 
 
 if __name__ == '__main__':
