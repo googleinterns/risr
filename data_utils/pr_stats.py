@@ -28,6 +28,7 @@ def get_pr_stats(writer, name, owner):
     appends relevant information to the comment_counts list.
 
     Args:
+        writer: CSV writer to record the data in a CSV file.
         name: A string containing the repository name.
         owner: A string containing the repository owner.
 

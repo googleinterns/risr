@@ -27,6 +27,7 @@ def get_pr_comments(writer, name, owner):
     appends relevant information to the comment_counts list.
 
     Args:
+        writer: CSV writer to record the data in a CSV file.
         name: A string containing the repository name.
         owner: A string containing the repository owner.
 
@@ -102,7 +103,7 @@ def process_comment(comment):
         comment: The comment node retrieved from the API.
 
     Returns:
-        List of strings that contain the comment data.
+        List of strings that contains the comment data.
     """
 
     if comment and comment['body'] != "":
@@ -138,7 +139,7 @@ def main():
     try:
         repo_type = sys.argv[1]
     except:
-        raise Exception("Usage: pr_stats.py <repository type>")
+        raise Exception("Usage: pr_comments.py <repository type>")
 
     repo_csv = f"data/{repo_type}_repos.csv"
 

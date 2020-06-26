@@ -42,7 +42,7 @@ class PrCommentsTest(unittest.TestCase):
             'author': None,
             'resourcePath': 'test path',
             'createdAt': 'test date',
-            'body': 'Looks good!'
+            'body': 'test body!'
         }
         self.assertEqual(
             pr_comments.process_comment(test_comment)[2], "deleted-user")
