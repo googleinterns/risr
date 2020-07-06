@@ -27,18 +27,18 @@ class PrStatsTest(unittest.TestCase):
 
     def test_get_stats_no_args(self):
         """ Test to check if missing arguments will raise exception. """
-        sys.argv = ['repos.py']
+        sys.argv = ["repos.py"]
         with self.assertRaises(Exception):
             pr_stats.main()
 
     def test_get_comments_no_file(self):
         """ Test to check if unsupported arguments will raise exception. """
-        sys.argv = ['repos.py', 'repo_type']
+        sys.argv = ["repos.py", "repo_type"]
         self.assertFalse(os.path.isfile("data/repo_type.csv"))
         with self.assertRaises(Exception):
             pr_stats.main()
 
-    @patch('pr_stats.get_pr_stats')
+    @patch("pr_stats.get_pr_stats")
     def test_get_pr_stats(self, mock_results):
         """ Test for getting test repository PR statistics.
 
@@ -50,113 +50,113 @@ class PrStatsTest(unittest.TestCase):
         # Mock results: pull requests for RISR repository.
         # pylint: disable=line-too-long
         mock_results.return_value = {
-            'data': {
-                'repository': {
-                    'pullRequests': {
-                        'nodes': [{
-                            'resourcePath': '/googleinterns/risr/pull/1',
-                            'number': 1,
-                            'createdAt': '2020-06-11T20:54:31Z',
-                            'closedAt': '2020-06-12T19:36:08Z',
-                            'deletions': 0,
-                            'additions': 653,
-                            'comments': {
-                                'totalCount': 0
+            "data": {
+                "repository": {
+                    "pullRequests": {
+                        "nodes": [{
+                            "resourcePath": "/googleinterns/risr/pull/1",
+                            "number": 1,
+                            "createdAt": "2020-06-11T20:54:31Z",
+                            "closedAt": "2020-06-12T19:36:08Z",
+                            "deletions": 0,
+                            "additions": 653,
+                            "comments": {
+                                "totalCount": 0
                             },
-                            'reviews': {
-                                'nodes': [{
-                                    'body':
+                            "reviews": {
+                                "nodes": [{
+                                    "body":
                                     "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
-                                    'comments': {
-                                        'totalCount': 3
+                                    "comments": {
+                                        "totalCount": 3
                                     }
                                 }, {
-                                    'body': '',
-                                    'comments': {
-                                        'totalCount': 1
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
                                     }
                                 }, {
-                                    'body':
+                                    "body":
                                     "much easier to read. Just remember to have a blank line at the end of files -- if you can get the linter up and running that'll be caught during the travis check.",
-                                    'comments': {
-                                        'totalCount': 2
+                                    "comments": {
+                                        "totalCount": 2
                                     }
                                 }, {
-                                    'body': 'LGTM; just fix a couple nits.',
-                                    'comments': {
-                                        'totalCount': 2
+                                    "body": "LGTM; just fix a couple nits.",
+                                    "comments": {
+                                        "totalCount": 2
                                     }
                                 }]
                             }
                         }, {
-                            'resourcePath': '/googleinterns/risr/pull/2',
-                            'number': 2,
-                            'createdAt': '2020-06-12T22:01:36Z',
-                            'closedAt': '2020-06-24T16:30:31Z',
-                            'deletions': 48,
-                            'additions': 631,
-                            'comments': {
-                                'totalCount': 0
+                            "resourcePath": "/googleinterns/risr/pull/2",
+                            "number": 2,
+                            "createdAt": "2020-06-12T22:01:36Z",
+                            "closedAt": "2020-06-24T16:30:31Z",
+                            "deletions": 48,
+                            "additions": 631,
+                            "comments": {
+                                "totalCount": 0
                             },
-                            'reviews': {
-                                'nodes': [{
-                                    'body': '',
-                                    'comments': {
-                                        'totalCount': 1
+                            "reviews": {
+                                "nodes": [{
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
                                     }
                                 }, {
-                                    'body':
+                                    "body":
                                     "The .pylintrc is aggro, but I'm fine with refactoring it if needed when it comes up.",
-                                    'comments': {
-                                        'totalCount': 0
+                                    "comments": {
+                                        "totalCount": 0
                                     }
                                 }]
                             }
                         }, {
-                            'resourcePath': '/googleinterns/risr/pull/3',
-                            'number': 3,
-                            'createdAt': '2020-06-24T16:36:50Z',
-                            'closedAt': '2020-06-24T20:25:02Z',
-                            'deletions': 19,
-                            'additions': 61,
-                            'comments': {
-                                'totalCount': 1
+                            "resourcePath": "/googleinterns/risr/pull/3",
+                            "number": 3,
+                            "createdAt": "2020-06-24T16:36:50Z",
+                            "closedAt": "2020-06-24T20:25:02Z",
+                            "deletions": 19,
+                            "additions": 61,
+                            "comments": {
+                                "totalCount": 1
                             },
-                            'reviews': {
-                                'nodes': [{
-                                    'body': 'tests?',
-                                    'comments': {
-                                        'totalCount': 2
+                            "reviews": {
+                                "nodes": [{
+                                    "body": "tests?",
+                                    "comments": {
+                                        "totalCount": 2
                                     }
                                 }, {
-                                    'body': '',
-                                    'comments': {
-                                        'totalCount': 1
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
                                     }
                                 }, {
-                                    'body': '',
-                                    'comments': {
-                                        'totalCount': 1
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
                                     }
                                 }, {
-                                    'body': '',
-                                    'comments': {
-                                        'totalCount': 0
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 0
                                     }
                                 }]
                             }
                         }, {
-                            'resourcePath': '/googleinterns/risr/pull/4',
-                            'number': 4,
-                            'createdAt': '2020-06-26T22:26:47Z',
-                            'closedAt': None,
-                            'deletions': 32,
-                            'additions': 392,
-                            'comments': {
-                                'totalCount': 0
+                            "resourcePath": "/googleinterns/risr/pull/4",
+                            "number": 4,
+                            "createdAt": "2020-06-26T22:26:47Z",
+                            "closedAt": None,
+                            "deletions": 32,
+                            "additions": 392,
+                            "comments": {
+                                "totalCount": 0
                             },
-                            'reviews': {
-                                'nodes': []
+                            "reviews": {
+                                "nodes": []
                             }
                         }]
                     }
@@ -170,7 +170,7 @@ class PrStatsTest(unittest.TestCase):
             os.remove(pr_stats_path)
         self.assertFalse(os.path.isfile(pr_stats_path))
 
-        sys.argv = ['repos.py', 'test']
+        sys.argv = ["repos.py", "test"]
         pr_stats.main()
         self.assertTrue(os.path.isfile(pr_stats_path))
         with open(pr_stats_path) as in_csv:
@@ -178,9 +178,9 @@ class PrStatsTest(unittest.TestCase):
             self.assertGreater(len(list(reader)), 1)
             for i, row in enumerate(reader, 1):
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
-                self.assertEqual(row['pr_number'], i)
+                self.assertEqual(row["pr_number"], i)
         os.remove(pr_stats_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

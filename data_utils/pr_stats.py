@@ -75,22 +75,23 @@ def process_stats_query_results(writer, result):
         None.
     """
     try:
-        pull_requests = result['data']['repository']['pullRequests']['nodes']
+        pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
     except:
         raise Exception(
-            "Query results for PR statistics has an unexpected structure.")
+            "Query results for PR statistics does not have a structure that is"
+            " currently supported by RISR.")
 
     for pull_request in pull_requests:
-        total_comments = pull_request['comments']['totalCount']
-        for review in pull_request['reviews']['nodes']:
-            if review['body'] != "" and review:
+        total_comments = pull_request["comments"]["totalCount"]
+        for review in pull_request["reviews"]["nodes"]:
+            if review["body"] != "" and review:
                 total_comments += 1
-            total_comments += review['comments']['totalCount']
+            total_comments += review["comments"]["totalCount"]
         writer.writerow([
-            pull_request['resourcePath'], pull_request['number'],
-            pull_request['createdAt'], pull_request['closedAt'],
+            pull_request["resourcePath"], pull_request["number"],
+            pull_request["createdAt"], pull_request["closedAt"],
             total_comments,
-            pull_request['deletions'] + pull_request['additions']
+            pull_request["deletions"] + pull_request["additions"]
         ])
 
 
@@ -122,8 +123,8 @@ def main():
         raise Exception(
             f"The CSV for {repo_type} repositories does not exist.")
 
-    with open(repo_csv, newline='') as in_csv, \
-         open(f'data/{repo_type}_pr_stats.csv', 'w', newline='') as out_csv:
+    with open(repo_csv, newline="") as in_csv, \
+            open(f"data/{repo_type}_pr_stats.csv", "w", newline="") as out_csv:
         reader = csv.DictReader(in_csv)
         writer = csv.writer(out_csv)
         writer.writerow([
@@ -131,7 +132,7 @@ def main():
             "pr_lines_changed"
         ])
         for row in reader:
-            query_results = get_pr_stats(row['name'], row['owner'])
+            query_results = get_pr_stats(row["name"], row["owner"])
             process_stats_query_results(writer, query_results)
 
 

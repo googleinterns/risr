@@ -88,21 +88,22 @@ def process_comment_query_results(writer, result):
         None.
     """
     try:
-        pull_requests = result['data']['repository']['pullRequests']['nodes']
+        pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
     except:
         raise Exception(
-            "Query results for PR comments has an unexpected structure.")
+            "Query results for PR comments does not have a structure that is"
+            " currently supported by RISR.")
 
     for pull_request in pull_requests:
-        for pr_comment in pull_request['comments']['nodes']:
+        for pr_comment in pull_request["comments"]["nodes"]:
             comment_row = process_comment(pr_comment)
             if comment_row:
                 writer.writerow(comment_row)
-        for review in pull_request['reviews']['nodes']:
+        for review in pull_request["reviews"]["nodes"]:
             comment_row = process_comment(review)
             if comment_row:
                 writer.writerow(comment_row)
-            for review_comment in review['comments']['nodes']:
+            for review_comment in review["comments"]["nodes"]:
                 comment_row = process_comment(review_comment)
                 if comment_row:
                     writer.writerow(comment_row)
@@ -121,14 +122,14 @@ def process_comment(comment):
         List of strings that contains the comment data.
     """
 
-    if comment and comment['body'] != "":
+    if comment and comment["body"] != "":
         # For the special case where the author has been deleted
-        if not comment['author']:
-            comment['author'] = {"login": "deleted-user"}
+        if not comment["author"]:
+            comment["author"] = {"login": "deleted-user"}
 
         return [
-            comment['resourcePath'], comment['createdAt'],
-            comment['author']['login'], comment['body']
+            comment["resourcePath"], comment["createdAt"],
+            comment["author"]["login"], comment["body"]
         ]
     return None
 
@@ -158,13 +159,13 @@ def main():
         raise Exception(
             f"The CSV for {repo_type} repositories does not exist.")
 
-    with open(repo_csv, newline='') as in_csv, \
-         open(f'data/{repo_type}_pr_comments.csv', 'w', newline="") as out_csv:
+    with open(repo_csv, newline="") as in_csv, \
+            open(f"data/{repo_type}_pr_comments.csv", "w", newline="") as out_csv:
         reader = csv.DictReader(in_csv)
         writer = csv.writer(out_csv)
         writer.writerow(["comment_path", "created", "author", "comment"])
         for row in reader:
-            query_results = get_pr_comments(row['name'], row['owner'])
+            query_results = get_pr_comments(row["name"], row["owner"])
             process_comment_query_results(writer, query_results)
 
 

@@ -80,22 +80,23 @@ def process_query_results(writer, result):
             an empty string if there are no results after the current cursor.
     """
     try:
-        repositories = result['data']['search']['edges']
+        repositories = result["data"]["search"]["edges"]
     except:
         raise Exception(
-            "Query results for repositories has an unexpected structure.")
+            "Query results for repositories does not have a structure that is"
+            " currently supported by RISR.")
 
     if not repositories:
         return ""
 
     for repo in repositories:
         writer.writerow([
-            repo['node']['owner']['login'], repo['node']['name'],
-            repo['node']['createdAt'],
-            repo['node']['pullRequests']['totalCount']
+            repo["node"]["owner"]["login"], repo["node"]["name"],
+            repo["node"]["createdAt"],
+            repo["node"]["pullRequests"]["totalCount"]
         ])
 
-    return repositories[-1]['cursor']
+    return repositories[-1]["cursor"]
 
 
 def query_generator(search="", loc="", org="", created="", sort=""):
@@ -109,7 +110,7 @@ def query_generator(search="", loc="", org="", created="", sort=""):
         sort: the order in which results are sorted.
 
     Returns:
-        Query string for the 'get_repos_after' function.
+        Query string for the "get_repos_after" function.
     """
     param_list = [search, loc, org, created, sort]
     query_str = " ".join(list(filter(None, param_list)))
@@ -160,9 +161,9 @@ def main():
     else:
         raise Exception(repo_type, "is an unsupported repository type.")
 
-    os.makedirs('data', exist_ok=True)
+    os.makedirs("data", exist_ok=True)
 
-    with open(f'data/{repo_type}_repos.csv', 'w', newline="") as file:
+    with open(f"data/{repo_type}_repos.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["owner", "name", "created", "pr_count"])
         cur_cursor = ""
