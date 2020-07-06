@@ -20,19 +20,17 @@ import sys
 from query import run_query
 
 
-def get_pr_comments(writer, name, owner):
+def get_pr_comments(name, owner):
     """ Gets the pull request comments from a particular repository.
 
-    This function processes the results from the Github API query and
-    appends relevant information to the comment_counts list.
+    This function fetches the results from the Github API query.
 
     Args:
-        writer: CSV writer to record the data in a CSV file.
         name: A string containing the repository name.
         owner: A string containing the repository owner.
 
     Returns:
-        None.
+        A JSON object with the pull request comment information.
     """
 
     query = f"""{{
@@ -74,9 +72,26 @@ def get_pr_comments(writer, name, owner):
         }}
     }}"""
 
-    result = run_query(query)
+    return run_query(query)
 
-    pull_requests = result['data']['repository']['pullRequests']['nodes']
+
+def process_comment_query_results(writer, result):
+    """ Processes the query results for pull request comments.
+
+    Uses the writer to record the pull request comment information.
+
+    Args:
+        writer: CSV writer to record the data in a CSV file.
+        result: the results from the query.
+
+    Returns:
+        None.
+    """
+    try:
+        pull_requests = result['data']['repository']['pullRequests']['nodes']
+    except:
+        raise Exception(
+            "Query results for PR comments has an unexpected structure.")
 
     for pull_request in pull_requests:
         for pr_comment in pull_request['comments']['nodes']:
@@ -96,8 +111,8 @@ def get_pr_comments(writer, name, owner):
 def process_comment(comment):
     """ Helper function to process a comment.
 
-    This function updates the total_comments variable and appends
-    relevant information to the comment_list list.
+    This function processes the comment JSON to get the comment path,
+    creation date, comment author, and comment text.
 
     Args:
         comment: The comment node retrieved from the API.
@@ -125,12 +140,7 @@ def main():
     of different types are stored in different CSV files. Current supported
     repository types are "starter" and "capstone".
 
-    pr_comment_counts.csv has the following columns:
-        pr_path: The resource path to the pull request.
-        created: The date and time that the pull request was created.
-        total_comments: Number of comments in pull request.
-
-    pr_comments.csv has the following columns:
+    <repo_type>_pr_comments.csv has the following columns:
         comment_path: The resource path to the comment.
         created: The date and time that the comment was created.
         author: The Github username of the comment author.
@@ -154,7 +164,8 @@ def main():
         writer = csv.writer(out_csv)
         writer.writerow(["comment_path", "created", "author", "comment"])
         for row in reader:
-            get_pr_comments(writer, row['name'], row['owner'])
+            query_results = get_pr_comments(row['name'], row['owner'])
+            process_comment_query_results(writer, query_results)
 
 
 if __name__ == "__main__":

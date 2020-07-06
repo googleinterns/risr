@@ -20,7 +20,7 @@ import os
 from query import run_query
 
 
-def get_repos_after(writer, repo_query, cursor):
+def get_repos_after(repo_query, cursor):
     """Gets the first 100 repositories after a cursor for a given query.
 
     This is necessary because GraphQL uses pagination, so only 100 results
@@ -31,8 +31,7 @@ def get_repos_after(writer, repo_query, cursor):
         cursor: A string containing a cursor used for GraphQL pagination.
 
     Returns:
-        str. A string containing the cursor of the last search result, or
-        an empty string if there are no results after the current cursor.
+        A JSON object with the pull request comment information.
     """
 
     query = """{{
@@ -64,20 +63,57 @@ def get_repos_after(writer, repo_query, cursor):
     after = ""
     if cursor != "":
         after = f"""after: "{cursor}","""
-    result = run_query(query.format(after=after, repo_query=repo_query))
+    return run_query(query.format(after=after, repo_query=repo_query))
 
-    results = result['data']['search']['edges']
-    if not results:
+
+def process_query_results(writer, result):
+    """ Processes the query results for the repository search.
+
+    Uses the writer to record the repository information.
+
+    Args:
+        writer: CSV writer to record the data in a CSV file.
+        result: the results from the query.
+
+    Returns:
+        str. A string containing the cursor of the last search result, or
+            an empty string if there are no results after the current cursor.
+    """
+    try:
+        repositories = result['data']['search']['edges']
+    except:
+        raise Exception(
+            "Query results for repositories has an unexpected structure.")
+
+    if not repositories:
         return ""
 
-    for result in results:
+    for repo in repositories:
         writer.writerow([
-            result['node']['owner']['login'], result['node']['name'],
-            result['node']['createdAt'],
-            result['node']['pullRequests']['totalCount']
+            repo['node']['owner']['login'], repo['node']['name'],
+            repo['node']['createdAt'],
+            repo['node']['pullRequests']['totalCount']
         ])
 
-    return results[-1]['cursor']
+    return repositories[-1]['cursor']
+
+
+def query_generator(search="", loc="", org="", created="", sort=""):
+    """ Generates a query for repository search based on input parameters.
+
+    Args:
+        search: the string that the query is looking for.
+        loc: where the query should look for the search string.
+        org: the repository that contains the repository.
+        created: the date range for repository creation that is considered.
+        sort: the order in which results are sorted.
+
+    Returns:
+        Query string for the 'get_repos_after' function.
+    """
+    param_list = [search, loc, org, created, sort]
+    query_str = " ".join(list(filter(None, param_list)))
+    return f"""\"{query_str}\""""
 
 
 def main():
@@ -100,27 +136,26 @@ def main():
         raise Exception("Usage: repos.py <repository type>")
 
     if repo_type == "starter":
-        # Look for a specific string in a repository README.md file. Results are
-        # sorted according to the date the repository was created.
-        repo_query = """\"
-            git clone https://github.com/googleinterns/step.git
-            in:readme
-            sort:created-asc
-        \""""
+        # This query looks for a specific string in a repository README.md file.
+        repo_query = query_generator(
+            search="git clone https://github.com/googleinterns/step.git",
+            loc="in:readme",
+            sort="sort:created-asc")
 
     elif repo_type == "capstone":
-        # Look for repositories that match the string "step 2020" and were
-        # created within the "googleinterns" organization after 06/17/2020.
         # This query follows the STEP capstone repository naming conventions
-        # and creation dates. Results are sorted according to the date the
-        # repository was created.
-        repo_query = """\"
-            step 2020
-            in:name
-            org:googleinterns
-            created:>2020-06-17
-            sort:created-asc
-        \""""
+        # and creation dates.
+        repo_query = query_generator(search="step 2020",
+                                     loc="in:name",
+                                     org="googleinterns",
+                                     created="created:>2020-06-17",
+                                     sort="sort:created-asc")
+
+    elif repo_type == "test":
+        # Look for the RISR repository.
+        repo_query = query_generator(search="risr",
+                                     loc="in:name",
+                                     org="googleinterns")
 
     else:
         raise Exception(repo_type, "is an unsupported repository type.")
@@ -132,7 +167,8 @@ def main():
         writer.writerow(["owner", "name", "created", "pr_count"])
         cur_cursor = ""
         while True:
-            next_cursor = get_repos_after(writer, repo_query, cur_cursor)
+            query_results = get_repos_after(repo_query, cur_cursor)
+            next_cursor = process_query_results(writer, query_results)
             if next_cursor == "":
                 break
             cur_cursor = next_cursor

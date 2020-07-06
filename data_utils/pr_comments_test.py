@@ -18,6 +18,7 @@ import csv
 import os
 import sys
 import unittest
+from unittest.mock import patch
 import pr_comments
 
 
@@ -76,13 +77,65 @@ class PrCommentsTest(unittest.TestCase):
         """ Test to check comment processing when no comment is given. """
         self.assertIsNone(pr_comments.process_comment(None))
 
-    def test_get_pr_comments(self):
+    @patch('pr_comments.get_pr_comments')
+    def test_get_pr_comments(self, mock_results):
         """ Test for getting test repository PR comments.
 
         This test uses a CSV with test repositories and checks if the
         output pull request comments CSV file is created correctly.
         The generated test files are deleted upon test completion.
         """
+
+        # Mock results: first three comments from eyurko in a pull request
+        # pylint: disable=line-too-long
+        mock_results.return_value = {
+            'data': {
+                'repository': {
+                    'pullRequests': {
+                        'nodes': [{
+                            'comments': {
+                                'nodes': []
+                            },
+                            'reviews': {
+                                'nodes': [{
+                                    'resourcePath':
+                                    '/googleinterns/risr/pull/1#pullrequestreview-429318666',
+                                    'body':
+                                    "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
+                                    'createdAt': '2020-06-11T21:51:20Z',
+                                    'author': {
+                                        'login': 'eyurko'
+                                    },
+                                    'comments': {
+                                        'nodes': [{
+                                            'resourcePath':
+                                            '/googleinterns/risr/pull/1#discussion_r439090660',
+                                            'body':
+                                            'Add a comment explaining this / what this does',
+                                            'createdAt':
+                                            '2020-06-11T21:51:20Z',
+                                            'author': {
+                                                'login': 'eyurko'
+                                            }
+                                        }, {
+                                            'resourcePath':
+                                            '/googleinterns/risr/pull/1#discussion_r439092264',
+                                            'body':
+                                            'If possible, unnest functions -- improves readability',
+                                            'createdAt':
+                                            '2020-06-11T21:53:36Z',
+                                            'author': {
+                                                'login': 'eyurko'
+                                            }
+                                        }]
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                }
+            }
+        }
 
         pr_comments_path = "data/test_pr_comments.csv"
 
@@ -95,10 +148,11 @@ class PrCommentsTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(pr_comments_path))
         with open(pr_comments_path) as in_csv:
             reader = csv.DictReader(in_csv)
-            self.assertGreater(len(list(reader)), 1)
+            self.assertEqual(len(list(reader)), 3)
             for row in reader:
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
+                self.assertTrue('eyurko' in row['author'])
         os.remove(pr_comments_path)
 
 
