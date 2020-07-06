@@ -53,12 +53,12 @@ class ReposTest(unittest.TestCase):
                                         loc="in:test-loc",
                                         org="org:test-org")
         params_1 = ["created:>test-date", "sort:test-order"]
-        params_1 = ["in:test-loc", "org:test-org"]
+        params_2 = ["in:test-loc", "org:test-org"]
         shared_param = "test search"
 
         self.assertTrue(all([param in query_1 for param in params_1]))
-        self.assertTrue(all([param not in query_1 for param in params_1]))
-        self.assertTrue(all([param in query_2 for param in params_1]))
+        self.assertTrue(all([param not in query_1 for param in params_2]))
+        self.assertTrue(all([param in query_2 for param in params_2]))
         self.assertTrue(all([param not in query_2 for param in params_1]))
         self.assertTrue(shared_param in query_1 and shared_param in query_2)
 
