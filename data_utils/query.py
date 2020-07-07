@@ -36,13 +36,22 @@ def run_query(query):
     # You can set the environment variable with the following command:
     #     $ export GITHUB_PAT="YOUR GITHUB PERSONAL ACCESS TOKEN HERE"
 
-    github_pat = os.getenv('GITHUB_PAT')
+    github_pat = os.getenv("GITHUB_PAT")
 
-    headers = {'Authorization': 'token ' + github_pat}
+    if github_pat is None:
+        raise Exception("GITHUB_PAT environment variable is not set.")
+
+    headers = {"Authorization": "token " + github_pat}
     request = requests.post("https://api.github.com/graphql",
                             headers=headers,
-                            json={'query': query})
+                            json={"query": query})
+
     # pylint: disable=no-member
     if request.status_code == requests.codes.ok:
-        return request.json()
+        result = request.json()
+        if "errors" in result.keys():
+            raise Exception("There was an error in the Github API query.",
+                            result)
+        return result
+
     raise Exception("Request to Github GraphQL API failed.")
