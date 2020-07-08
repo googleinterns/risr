@@ -37,3 +37,7 @@ jobs:
           pip install -r requirements.txt
       - name: Lint with pylint
         run: bash ./lint.sh all
+      - name: Install modules
+        run: npm install
+      - name: Run ESLint
+        run: eslint . --ext .js,.jsx,.ts,.tsx
