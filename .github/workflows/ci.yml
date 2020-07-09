@@ -39,5 +39,6 @@ jobs:
         run: bash ./lint.sh all
       - name: Install modules and run ESLint
         working-directory: ./risr-app/risr_proj/dashboard-fe
-        run: npm install
-             eslint . --ext .js,.jsx,.ts,.tsx
+        run: |
+          npm install
+          eslint . --ext .js,.jsx,.ts,.tsx
