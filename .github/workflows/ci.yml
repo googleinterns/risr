@@ -41,4 +41,4 @@ jobs:
         working-directory: ./risr-app/risr_proj/dashboard-fe
         run: |
           npm install
-          eslint . --ext .js,.jsx,.ts,.tsx
+          npm run pretest
