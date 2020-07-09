@@ -37,3 +37,8 @@ jobs:
           pip install -r requirements.txt
       - name: Lint with pylint
         run: bash ./lint.sh all
+      - name: Install modules and run ESLint
+        working-directory: ./risr-app/risr_proj/dashboard-fe
+        run: |
+          npm install
+          npm run pretest
