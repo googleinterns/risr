@@ -15,7 +15,7 @@
  */
 
 /**
- * @fileoverview Main React component that defines the app.c
+ * @fileoverview Main React component that defines the app.
  */
 
 import React, {Component, Fragment} from 'react';
@@ -28,7 +28,7 @@ import './App.css';
  */
 class App extends Component {
   /**
-   * Renders the components of the React App
+   * Renders the components of the React App.
    * @return {React.Fragment}
    */
   render() {
