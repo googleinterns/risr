@@ -15,31 +15,26 @@
  */
 
 /**
- * @fileoverview Main React component that defines the app.
- * @author elisazhao@google.com (Elisa Zhao Hang)
+ * @fileoverview Header component of the React app.
  */
 
-import React, {Component, Fragment} from 'react';
-import Header from './components/Header';
-import Home from './components/Home';
-import './App.css';
+import React, {Component} from 'react';
 
 /**
- * React App class.
+ * Header class definition.
  */
-class App extends Component {
+class Header extends Component {
   /**
-   * Renders the components of the React App
-   * @return {React.Fragment}
-  */
+   * Renders the components of the header.
+   * @return {Component}
+   */
   render() {
     return (
-      <Fragment>
-        <Header />
-        <Home />
-      </Fragment>
+      <div className="text-center">
+        <h1>RISR</h1>
+      </div>
     );
   }
 }
 
-export default App;
+export default Header;
