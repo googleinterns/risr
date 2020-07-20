@@ -47,8 +47,8 @@ fi
 
 if [[ "$CHECK_ALL" = true ]]
 then
-  lintAllFiles "data_utils" ""
+  lintAllFiles "data_utils risr-app" ""
 
 else
-  lintChangedFiles "data_utils" ""
+  lintChangedFiles "data_utils risr-app" ""
 fi

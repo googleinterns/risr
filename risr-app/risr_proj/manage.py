@@ -12,7 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
@@ -21,6 +23,7 @@ def main():
     """Main function for the utility."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'risr_proj.settings')
     try:
+        # pylint: disable=import-outside-toplevel
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
