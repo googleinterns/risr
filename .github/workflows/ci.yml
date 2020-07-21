@@ -39,10 +39,13 @@ jobs:
 
   lint-build-js:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./risr-app/risr_proj/dashboard-fe
     steps:
-      - name: Install modules and run ESLint
-        working-directory: ./risr-app/risr_proj/dashboard-fe
-        run: |
-          npm install
-          npm run pretest
-          npm run test
+      - uses: actions/checkout@v1
+      - name: Install module
+        run: npm install
+      - name: Lint with ESLint
+        run: npm run pretest
+      - name: Test with Jest and Enzyme
+        run: npm run test
