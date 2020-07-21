@@ -47,7 +47,12 @@ class Home extends Component {
   componentDidMount() {
     axios
       .get(API_URL)
-      .then((res) => this.setState({data: JSON.parse(res.data)}));
+      .then((res) => {
+        this.setState({data: JSON.parse(res.data)});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   /**

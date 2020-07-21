@@ -62,9 +62,14 @@ class BarChart extends Component {
    */
   static getDerivedStateFromProps(nextProps, prevState) {
     // Check if data has been loaded.
-    if (!nextProps.data) return null;
+    // console.log(nextProps.data === {[]});
+    if (!nextProps.data || !nextProps.data.length) return null;
 
+    // Check if data has the expected keys.
     const {data} = nextProps;
+
+    if (!('pr_range' in data[0]) || !('repo_count' in data[0])) return null;
+
     const {xScale, yScale} = prevState;
 
     // Calculate scale domains based on data.

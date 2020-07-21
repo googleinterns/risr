@@ -1,4 +1,6 @@
 /* eslint-disable require-jsdoc */
+/* eslint-disable no-undef */
+
 /*
  * Copyright 2020 Google LLC
  *
