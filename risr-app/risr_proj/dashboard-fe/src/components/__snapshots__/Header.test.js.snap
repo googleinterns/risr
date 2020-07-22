@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header component renders the page title 1`] = `
+Array [
+  <div
+    className="text-center"
+  >
+    <h1>
+      RISR
+    </h1>
+  </div>,
+]
+`;

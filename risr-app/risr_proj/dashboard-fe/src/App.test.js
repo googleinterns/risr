@@ -15,11 +15,15 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {shallow} from 'enzyme';
 import App from './App';
+import Header from './components/Header';
+import Home from './components/Home';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+describe('App component', () => {
+  test('renders without crashing', () => {
+    const shallowApp = shallow(<App />);
+    expect(shallowApp.contains(<Header />)).toEqual(true);
+    expect(shallowApp.contains(<Home />)).toEqual(true);
+  });
 });
