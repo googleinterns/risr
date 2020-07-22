@@ -25,15 +25,20 @@ describe('Bar chart component', () => {
     expect(shallowChart.find('g')).toHaveLength(3);
   });
 
-  test('renders expected number of rectangles', () => {
+  test('renders four rectangles with the same height', () => {
     const data = [
-      {'pr_range': '0-1', 'repo_count': 136},
+      {'pr_range': '0-1', 'repo_count': 10},
       {'pr_range': '2-3', 'repo_count': 10},
-      {'pr_range': '4-5', 'repo_count': 15},
+      {'pr_range': '4-5', 'repo_count': 10},
       {'pr_range': '6-7', 'repo_count': 10}];
     const shallowChart = shallow(<BarChart />);
     shallowChart.setProps({data: data});
-    expect(shallowChart.find('rect')).toHaveLength(4);
+    const bars = shallowChart.find('rect');
+    expect(bars).toHaveLength(4);
+    const firstHeight = bars.first().props().height;
+    bars.forEach((bar) => {
+      expect(bar.props()).toHaveProperty('height', firstHeight);
+    });
   });
 });
 

@@ -28,7 +28,8 @@ const margin = {top: 20, right: 5, bottom: 20, left: 35};
 const blue = '#52b6ca';
 
 /**
- * Bar chart component.
+ * Bar chart component. Currently only supports data for the capstone repository
+ * pull request counts.
  */
 class BarChart extends Component {
   /**
@@ -62,12 +63,11 @@ class BarChart extends Component {
    */
   static getDerivedStateFromProps(nextProps, prevState) {
     // Check if data has been loaded.
-    // console.log(nextProps.data === {[]});
     if (!nextProps.data || !nextProps.data.length) return null;
 
-    // Check if data has the expected keys.
+    // Check if data has the expected 'pr_range' and 'repo_count' keys from
+    // the currently supported data set.
     const {data} = nextProps;
-
     if (!('pr_range' in data[0]) || !('repo_count' in data[0])) return null;
 
     const {xScale, yScale} = prevState;
