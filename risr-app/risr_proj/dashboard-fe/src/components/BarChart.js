@@ -24,7 +24,12 @@ import PropTypes from 'prop-types';
 
 const width = 650;
 const height = 400;
-const margin = {top: 20, right: 5, bottom: 20, left: 35};
+const margin = {
+  top: 40,
+  right: 5,
+  bottom: 50,
+  left: 60,
+};
 const blue = '#52b6ca';
 
 /**
@@ -51,53 +56,78 @@ class BarChart extends Component {
     this.xAxis = d3.axisBottom().scale(this.state.xScale);
     this.yAxis = d3.axisLeft().scale(this.state.yScale);
     this.chartRef = React.createRef();
+    this.barRef = React.createRef();
     this.xAxisRef = React.createRef();
     this.yAxisRef = React.createRef();
   }
 
   /**
-   * Calculate and set bar characteristics based on data from the API.
-   * @param {object} nextProps
-   * @param {object} prevState
-   * @return {object}
+   * Append bars to the SVG chart based on data in the component props.
    */
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // Check if data has been loaded.
-    if (!nextProps.data || !nextProps.data.length) return null;
+  drawBars() {
+    const {data} = this.props;
 
-    // Check if data has the expected 'pr_range' and 'repo_count' keys from
-    // the currently supported data set.
-    const {data} = nextProps;
-    if (!('pr_range' in data[0]) || !('repo_count' in data[0])) return null;
-
-    const {xScale, yScale} = prevState;
+    // Check if the data has been loaded and it has the expected 'pr_range' and
+    // 'repo_count' keys from the currently supported data set.
+    if (
+      !data ||
+      !data.length ||
+      !('pr_range' in data[0]) ||
+      !('repo_count' in data[0])
+    ) {
+      return;
+    }
 
     // Calculate scale domains based on data.
+    const {xScale, yScale} = this.state;
     const prRangeDomain = data.map((d) => d.pr_range);
     const repoCountMax = d3.max(data, (d) => d.repo_count);
     xScale.domain(prRangeDomain);
     yScale.domain([0, repoCountMax]);
-
-    // Calculate bar characteristics based on data.
-    const bars = data.map((d) => {
-      const y1 = yScale(d.repo_count);
-      const y2 = yScale(0);
-      return {
-        x: xScale(d.pr_range),
-        y: y1,
-        height: y2 - y1,
-        fill: blue,
-      };
-    });
-    return {bars};
+    d3.select(this.barRef.current)
+      .attr('fill', blue)
+      .selectAll('rect')
+      .data(data)
+      .join('rect')
+      .attr('x', (d) => xScale(d.pr_range))
+      .attr('y', (d) => yScale(d.repo_count))
+      .attr('width', xScale.bandwidth())
+      .attr('height', (d) => yScale(0) - yScale(d.repo_count));
   }
 
   /**
-   * Set axes characteristics after the bar characteristics have been set.
+   * Draw axes and titles after bars are rendered. Constants for label
+   * positions were chosen based on what looked aesthetically pleasing.
    */
   componentDidUpdate() {
+    // Add chart bars
+    this.drawBars();
+    // Add axes
     d3.select(this.xAxisRef.current).call(this.xAxis);
     d3.select(this.yAxisRef.current).call(this.yAxis);
+    // Add chart title
+    d3.select(this.chartRef.current)
+      .append('text')
+      .attr('x', width / 2 + margin.right)
+      .attr('y', margin.top / 2)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '20px')
+      .text('Capstone Repositories');
+    // Add y-axis label
+    d3.select(this.chartRef.current)
+      .append('text')
+      .attr('x', margin.top - height / 2)
+      .attr('y', margin.left / 3)
+      .attr('transform', 'rotate(-90)')
+      .attr('text-anchor', 'middle')
+      .text('Number of repositories');
+    // Add x-axis label
+    d3.select(this.chartRef.current)
+      .append('text')
+      .attr('x', width / 2 + margin.right)
+      .attr('y', height - margin.bottom / 8)
+      .attr('text-anchor', 'middle')
+      .text('Number of pull requests');
   }
 
   /**
@@ -108,23 +138,12 @@ class BarChart extends Component {
   render() {
     return (
       <svg ref={this.chartRef} width={width} height={height}>
-        {this.state.bars.map((d, i) => (
-          <rect
-            key={i}
-            x={d.x}
-            y={d.y}
-            width={this.state.xScale.bandwidth()}
-            height={d.height}
-            fill={d.fill}
-          />
-        ))}
-        <g>
-          <g
-            ref={this.xAxisRef}
-            transform={`translate(0, ${height - margin.bottom})`}
-          />
-          <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
-        </g>
+        <g ref={this.barRef} />
+        <g
+          ref={this.xAxisRef}
+          transform={`translate(0, ${height - margin.bottom})`}
+        />
+        <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
       </svg>
     );
   }

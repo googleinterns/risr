@@ -15,8 +15,10 @@
 //  */
 
 import React from 'react';
-import {shallow} from 'enzyme';
+import {shallow, mount} from 'enzyme';
 import BarChart from './BarChart';
+
+const cheerio = require('cheerio');
 
 describe('Bar chart component', () => {
   test('renders a svg element', () => {
@@ -27,18 +29,32 @@ describe('Bar chart component', () => {
 
   test('renders four rectangles with the same height', () => {
     const data = [
-      {'pr_range': '0-1', 'repo_count': 10},
-      {'pr_range': '2-3', 'repo_count': 10},
-      {'pr_range': '4-5', 'repo_count': 10},
-      {'pr_range': '6-7', 'repo_count': 10}];
-    const shallowChart = shallow(<BarChart />);
+      {pr_range: '0-1', repo_count: 10},
+      {pr_range: '2-3', repo_count: 10},
+      {pr_range: '4-5', repo_count: 10},
+      {pr_range: '6-7', repo_count: 10},
+    ];
+    const shallowChart = mount(<BarChart />);
     shallowChart.setProps({data: data});
-    const bars = shallowChart.find('rect');
-    expect(bars).toHaveLength(4);
-    const firstHeight = bars.first().props().height;
-    bars.forEach((bar) => {
-      expect(bar.props()).toHaveProperty('height', firstHeight);
+    const $ = cheerio.load(shallowChart.html());
+    const bars = $('rect').children();
+    expect($('rect')).toHaveLength(4);
+    const firstHeight = bars.first().attr('height');
+    bars.each((bar) => {
+      expect(bar.attr('height')).toEqual(firstHeight);
     });
   });
-});
 
+  test('renders three text labels for the chart', () => {
+    const data = [
+      {pr_range: '0-1', repo_count: 10},
+      {pr_range: '2-3', repo_count: 10},
+      {pr_range: '4-5', repo_count: 10},
+      {pr_range: '6-7', repo_count: 10},
+    ];
+    const shallowChart = mount(<BarChart />);
+    shallowChart.setProps({data: data});
+    const $ = cheerio.load(shallowChart.html());
+    expect($('svg').children('text')).toHaveLength(3);
+  });
+});
