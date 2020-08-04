@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "eslint-config-google": "^0.14.0",
