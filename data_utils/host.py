@@ -20,18 +20,19 @@ import os
 import sys
 
 def main():
-    """ Saves host usernames from internal spreadsheet.
+    """ Saves host usernames from STEP teams CSV.
 
-    github_usernames.csv is an internal document that contains information
-    about the STEP interns and hosts.
+    Expects file path to STEP teams CSV to be provided in the command
+    line arguments.
 
-    host_usernames.csv stores the host usernames from the general spreadsheet.
+    host_usernames.csv is created to store the host usernames, intern start
+    date, and team number from the STEP teams CSV.
     """
 
     try:
         filename = sys.argv[1]
     except:
-        raise Exception("Usage: host.py <repository type>")
+        raise Exception("Usage: host.py <STEP teams CSV>")
 
     if not os.path.isfile(filename):
         raise Exception("The CSV for the Github usernames does not exist.")
