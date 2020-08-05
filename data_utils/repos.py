@@ -153,9 +153,6 @@ def get_query_from_repo_type(repo_type):
                                      loc="in:name",
                                      org="googleinterns")
 
-    else:
-        raise Exception(repo_type, "is an unsupported repository type.")
-
     return repo_query
 
 
@@ -175,12 +172,16 @@ def main():
     """
 
     arg_count = len(sys.argv)
+    supported_types = {"test", "starter", "capstone"}
 
     # Check if there are arguments that specify repository types.
     if arg_count == 1:
         raise Exception("Usage: repos.py <repository type>...")
 
     repo_types = sys.argv[1:]
+
+    if not set(repo_types).issubset(supported_types):
+        raise Exception("Arguments contain unsupported repository type.")
 
     os.makedirs("data", exist_ok=True)
 
