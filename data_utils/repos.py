@@ -123,7 +123,7 @@ def get_query_from_repo_type(repo_type):
     """ Calls query_generator with parameters for the specified repository type.
 
     Args:
-        type: the string with the repository type. Currently supports "starter",
+        repo_type: the string with the repository type. Currently supports "starter",
         "capstone", and "test" (for testing purposes).
 
     Returns:

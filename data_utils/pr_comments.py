@@ -84,6 +84,7 @@ def process_comment_query_results(writer, result, repo_type, host_usernames):
         writer: CSV writer to record the data in a CSV file.
         result: The results from the query.
         repo_type: A string containing the repository type.
+        host_usernames: A set containing all known host usernames.
 
     Returns:
         None.
@@ -167,16 +168,18 @@ def main():
     if arg_count == 1:
         comment_csv = "data/pr_comments.csv"
         repo_csv = "data/repos.csv"
+        host_csv = "data/host_usernames.csv"
     else:
         if sys.argv[1] == "test":
             comment_csv = "data/test_pr_comments.csv"
             repo_csv = "data/test_repos.csv"
+            host_csv = "data/test_host_usernames.csv"
 
     if not os.path.isfile(repo_csv):
         raise Exception("The CSV for intern repositories does not exist.")
 
     host_usernames = set()
-    with open("data/host_usernames.csv", newline="") as host_csv:
+    with open(host_csv, newline="") as host_csv:
         reader = csv.DictReader(host_csv)
         for row in reader:
             host_usernames.add(row["username"])
