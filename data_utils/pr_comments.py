@@ -88,21 +88,21 @@ def process_comment_query_results(writer, result):
         None.
     """
     try:
-        pull_requests = result['data']['repository']['pullRequests']['nodes']
+        pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
     except:
         raise Exception(
             "Query results for PR comments has an unexpected structure.")
 
     for pull_request in pull_requests:
-        for pr_comment in pull_request['comments']['nodes']:
+        for pr_comment in pull_request["comments"]["nodes"]:
             comment_row = process_comment(pr_comment)
             if comment_row:
                 writer.writerow(comment_row)
-        for review in pull_request['reviews']['nodes']:
+        for review in pull_request["reviews"]["nodes"]:
             comment_row = process_comment(review)
             if comment_row:
                 writer.writerow(comment_row)
-            for review_comment in review['comments']['nodes']:
+            for review_comment in review["comments"]["nodes"]:
                 comment_row = process_comment(review_comment)
                 if comment_row:
                     writer.writerow(comment_row)
@@ -121,14 +121,14 @@ def process_comment(comment):
         List of strings that contains the comment data.
     """
 
-    if comment and comment['body'] != "":
+    if comment and comment["body"] != "":
         # For the special case where the author has been deleted
-        if not comment['author']:
-            comment['author'] = {"login": "deleted-user"}
+        if not comment["author"]:
+            comment["author"] = {"login": "deleted-user"}
 
         return [
-            comment['resourcePath'], comment['createdAt'],
-            comment['author']['login'], comment['body']
+            comment["resourcePath"], comment["createdAt"],
+            comment["author"]["login"], comment["body"]
         ]
     return None
 
@@ -136,35 +136,27 @@ def process_comment(comment):
 def main():
     """ Retrieves the comments in pull requests for intern repositories.
 
-    The comments retrieved depend on command line arguments. Repositories
-    of different types are stored in different CSV files. Current supported
-    repository types are "starter" and "capstone".
-
-    <repo_type>_pr_comments.csv has the following columns:
+    pr_comments.csv has the following columns:
         comment_path: The resource path to the comment.
         created: The date and time that the comment was created.
         author: The Github username of the comment author.
         comment: The text in the comment.
+        repo_type: The type of repository that the comment was made in.
+        is_host: Boolean that indicates if author is a host.
     """
 
-    try:
-        repo_type = sys.argv[1]
-    except:
-        raise Exception("Usage: pr_comments.py <repository type>")
-
-    repo_csv = f"data/{repo_type}_repos.csv"
+    repo_csv = "data/repos.csv"
 
     if not os.path.isfile(repo_csv):
-        raise Exception(
-            f"The CSV for {repo_type} repositories does not exist.")
+        raise Exception("The CSV for intern repositories does not exist.")
 
-    with open(repo_csv, newline='') as in_csv, \
-         open(f'data/{repo_type}_pr_comments.csv', 'w', newline="") as out_csv:
+    with open(repo_csv, newline="") as in_csv, \
+         open("data/pr_comments.csv", "w", newline="") as out_csv:
         reader = csv.DictReader(in_csv)
         writer = csv.writer(out_csv)
         writer.writerow(["comment_path", "created", "author", "comment"])
         for row in reader:
-            query_results = get_pr_comments(row['name'], row['owner'])
+            query_results = get_pr_comments(row["name"], row["owner"])
             process_comment_query_results(writer, query_results)
 
 
