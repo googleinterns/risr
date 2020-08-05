@@ -84,7 +84,8 @@ def process_query_results(writer, result, repo_type):
         repositories = result["data"]["search"]["edges"]
     except:
         raise Exception(
-            "Query results for repositories has an unexpected structure.")
+            "Query results for repositories does not have a structure that is"
+            " currently supported by RISR.")
 
     if not repositories:
         return ""

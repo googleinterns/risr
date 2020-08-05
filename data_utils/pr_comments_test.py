@@ -24,15 +24,16 @@ import pr_comments
 
 class PrCommentsTest(unittest.TestCase):
     """ PR Comments test class. """
+
     def test_get_comments_no_args(self):
         """ Test to check if missing arguments will raise exception. """
-        sys.argv = ['repos.py']
+        sys.argv = ["repos.py"]
         with self.assertRaises(Exception):
             pr_comments.main()
 
     def test_get_comments_no_file(self):
         """ Test to check if unsupported arguments will raise exception. """
-        sys.argv = ['repos.py', 'repo_type']
+        sys.argv = ["repos.py", "repo_type"]
         self.assertFalse(os.path.isfile("data/repo_type.csv"))
         with self.assertRaises(Exception):
             pr_comments.main()
@@ -40,10 +41,10 @@ class PrCommentsTest(unittest.TestCase):
     def test_process_comment_no_author(self):
         """ Test to check comment processing when data has no author. """
         test_comment = {
-            'author': None,
-            'resourcePath': 'test path',
-            'createdAt': 'test date',
-            'body': 'test body!'
+            "author": None,
+            "resourcePath": "test path",
+            "createdAt": "test date",
+            "body": "test body!"
         }
         self.assertEqual(
             pr_comments.process_comment(test_comment)[2], "deleted-user")
@@ -51,10 +52,10 @@ class PrCommentsTest(unittest.TestCase):
     def test_process_comment_no_body(self):
         """ Test to check comment processing when data has no body. """
         test_comment = {
-            'author': {'login': 'test login'},
-            'resourcePath': 'test path',
-            'createdAt': 'test date',
-            'body': ''
+            "author": {"login": "test login"},
+            "resourcePath": "test path",
+            "createdAt": "test date",
+            "body": ""
         }
         self.assertIsNone(pr_comments.process_comment(test_comment))
 
@@ -62,22 +63,22 @@ class PrCommentsTest(unittest.TestCase):
         """ Test to check comment processing when data is formatted
             correctly. """
         test_comment = {
-            'author': {'login': 'test login'},
-            'resourcePath': 'test path',
-            'createdAt': 'test date',
-            'body': 'test body'
+            "author": {"login": "test login"},
+            "resourcePath": "test path",
+            "createdAt": "test date",
+            "body": "test body"
         }
         comment_row = pr_comments.process_comment(test_comment)
-        self.assertEqual(comment_row[0], 'test path')
-        self.assertEqual(comment_row[1], 'test date')
-        self.assertEqual(comment_row[2], 'test login')
-        self.assertEqual(comment_row[3], 'test body')
+        self.assertEqual(comment_row[0], "test path")
+        self.assertEqual(comment_row[1], "test date")
+        self.assertEqual(comment_row[2], "test login")
+        self.assertEqual(comment_row[3], "test body")
 
     def test_process_comment_no_comment(self):
         """ Test to check comment processing when no comment is given. """
         self.assertIsNone(pr_comments.process_comment(None))
 
-    @patch('pr_comments.get_pr_comments')
+    @patch("pr_comments.get_pr_comments")
     def test_get_pr_comments(self, mock_results):
         """ Test for getting test repository PR comments.
 
@@ -89,43 +90,43 @@ class PrCommentsTest(unittest.TestCase):
         # Mock results: first three comments from eyurko in a pull request
         # pylint: disable=line-too-long
         mock_results.return_value = {
-            'data': {
-                'repository': {
-                    'pullRequests': {
-                        'nodes': [{
-                            'comments': {
-                                'nodes': []
+            "data": {
+                "repository": {
+                    "pullRequests": {
+                        "nodes": [{
+                            "comments": {
+                                "nodes": []
                             },
-                            'reviews': {
-                                'nodes': [{
-                                    'resourcePath':
-                                    '/googleinterns/risr/pull/1#pullrequestreview-429318666',
-                                    'body':
+                            "reviews": {
+                                "nodes": [{
+                                    "resourcePath":
+                                    "/googleinterns/risr/pull/1#pullrequestreview-429318666",
+                                    "body":
                                     "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
-                                    'createdAt': '2020-06-11T21:51:20Z',
-                                    'author': {
-                                        'login': 'eyurko'
+                                    "createdAt": "2020-06-11T21:51:20Z",
+                                    "author": {
+                                        "login": "eyurko"
                                     },
-                                    'comments': {
-                                        'nodes': [{
-                                            'resourcePath':
-                                            '/googleinterns/risr/pull/1#discussion_r439090660',
-                                            'body':
-                                            'Add a comment explaining this / what this does',
-                                            'createdAt':
-                                            '2020-06-11T21:51:20Z',
-                                            'author': {
-                                                'login': 'eyurko'
+                                    "comments": {
+                                        "nodes": [{
+                                            "resourcePath":
+                                            "/googleinterns/risr/pull/1#discussion_r439090660",
+                                            "body":
+                                            "Add a comment explaining this / what this does",
+                                            "createdAt":
+                                            "2020-06-11T21:51:20Z",
+                                            "author": {
+                                                "login": "eyurko"
                                             }
                                         }, {
-                                            'resourcePath':
-                                            '/googleinterns/risr/pull/1#discussion_r439092264',
-                                            'body':
-                                            'If possible, unnest functions -- improves readability',
-                                            'createdAt':
-                                            '2020-06-11T21:53:36Z',
-                                            'author': {
-                                                'login': 'eyurko'
+                                            "resourcePath":
+                                            "/googleinterns/risr/pull/1#discussion_r439092264",
+                                            "body":
+                                            "If possible, unnest functions -- improves readability",
+                                            "createdAt":
+                                            "2020-06-11T21:53:36Z",
+                                            "author": {
+                                                "login": "eyurko"
                                             }
                                         }]
                                     }
@@ -143,7 +144,7 @@ class PrCommentsTest(unittest.TestCase):
             os.remove(pr_comments_path)
         self.assertFalse(os.path.isfile(pr_comments_path))
 
-        sys.argv = ['repos.py', 'test']
+        sys.argv = ["repos.py", "test"]
         pr_comments.main()
         self.assertTrue(os.path.isfile(pr_comments_path))
         with open(pr_comments_path) as in_csv:
@@ -152,9 +153,9 @@ class PrCommentsTest(unittest.TestCase):
             for row in reader:
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
-                self.assertTrue('eyurko' in row['author'])
+                self.assertTrue("eyurko" in row["author"])
         os.remove(pr_comments_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

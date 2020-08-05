@@ -25,11 +25,11 @@ class QueryTest(unittest.TestCase):
     def test_run_query_exception(self):
         """ Test to check if exception is raised when environment variable
         for the Github Personal Access Token is not set. """
-        cur_github_pat = os.getenv('GITHUB_PAT')
-        os.environ['GITHUB_PAT'] = ""
+        cur_github_pat = os.getenv("GITHUB_PAT")
+        os.environ["GITHUB_PAT"] = ""
         with self.assertRaises(Exception):
             query.run_query("")
-        os.environ['GITHUB_PAT'] = cur_github_pat
+        os.environ["GITHUB_PAT"] = cur_github_pat
 
     def test_run_query_error(self):
         """ Test to check if incorrect queries get an error JSON object. """
@@ -45,9 +45,9 @@ class QueryTest(unittest.TestCase):
         }"""
         name_with_owner = "googleinterns/risr"
         result = query.run_query(query_input)
-        self.assertEqual(result['data']['repository']['nameWithOwner'],
+        self.assertEqual(result["data"]["repository"]["nameWithOwner"],
                          name_with_owner)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

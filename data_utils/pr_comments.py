@@ -91,7 +91,8 @@ def process_comment_query_results(writer, result):
         pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
     except:
         raise Exception(
-            "Query results for PR comments has an unexpected structure.")
+            "Query results for PR comments does not have a structure that is"
+            " currently supported by RISR.")
 
     for pull_request in pull_requests:
         for pr_comment in pull_request["comments"]["nodes"]:
