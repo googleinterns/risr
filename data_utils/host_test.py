@@ -59,7 +59,7 @@ class HostTest(unittest.TestCase):
             self.assertEqual(next(reader), ["user1", "date1", "number1"])
             self.assertEqual(next(reader), ["user2", "date1", "number1"])
             self.assertEqual(next(reader), ["user3", "date2", "number2"])
-        
+
         os.remove("test_usernames.csv")
 
 
