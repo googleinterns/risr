@@ -66,7 +66,7 @@ def get_repos_after(repo_query, cursor):
     return run_query(query.format(after=after, repo_query=repo_query))
 
 
-def process_query_results(writer, result):
+def process_query_results(writer, result, repo_type):
     """ Processes the query results for the repository search.
 
     Uses the writer to record the repository information.
@@ -74,6 +74,7 @@ def process_query_results(writer, result):
     Args:
         writer: CSV writer to record the data in a CSV file.
         result: the results from the query.
+        repo_type: the repository type.
 
     Returns:
         str. A string containing the cursor of the last search result, or
@@ -93,7 +94,8 @@ def process_query_results(writer, result):
         writer.writerow([
             repo["node"]["owner"]["login"], repo["node"]["name"],
             repo["node"]["createdAt"],
-            repo["node"]["pullRequests"]["totalCount"]
+            repo["node"]["pullRequests"]["totalCount"],
+            repo_type
         ])
 
     return repositories[-1]["cursor"]
@@ -117,25 +119,18 @@ def query_generator(search="", loc="", org="", created="", sort=""):
     return f"""\"{query_str}\""""
 
 
-def main():
-    """Retrieves all the STEP intern repos and stores them in a CSV file.
+def get_query_from_repo_type(repo_type):
+    """ Calls query_generator with parameters for the specified repository type.
 
-    The intern repos retrieved depend on command line arguments. Repositories
-    of different types are stored in different CSV files. Current supported
-    repository types are "starter" and "capstone".
+    Args:
+        repo_type: the string with the repository type. Currently supports "starter",
+        "capstone", and "test" (for testing purposes).
 
-    <repo_type>_repos.csv has the following columns:
-        owner: The STEP intern Github username.
-        name: The repository name.
-        created: The time and date that the repository was created.
-        pr_count: The number of pull requests in the repository.
+    Returns:
+        Query string for the repository type.
     """
 
-    try:
-        repo_type = sys.argv[1]
-    except:
-        raise Exception("Usage: repos.py <repository type>")
-
+    repo_query = ""
     if repo_type == "starter":
         # This query looks for a specific string in a repository README.md file.
         repo_query = query_generator(
@@ -158,21 +153,66 @@ def main():
                                      loc="in:name",
                                      org="googleinterns")
 
-    else:
-        raise Exception(repo_type, "is an unsupported repository type.")
+    return repo_query
+
+
+def main():
+    """Retrieves all the STEP intern repos and stores them in a CSV file.
+
+    The intern repos retrieved depend on command line arguments. Repositories
+    of different types are stored in different CSV files. Current supported
+    repository types are "starter" and "capstone".
+
+    repos.csv has the following columns:
+        owner: The STEP intern Github username.
+        name: The repository name.
+        created: The time and date that the repository was created.
+        pr_count: The number of pull requests in the repository.
+        repo_type: The type of repository.
+    """
+
+    arg_count = len(sys.argv)
+    supported_types = {"test", "starter", "capstone"}
+
+    # Check if there are arguments that specify repository types.
+    if arg_count == 1:
+        raise Exception("Usage: repos.py <repository type>...")
+
+    repo_types = sys.argv[1:]
+
+    if not set(repo_types).issubset(supported_types):
+        raise Exception("Arguments contain unsupported repository type.")
 
     os.makedirs("data", exist_ok=True)
 
-    with open(f"data/{repo_type}_repos.csv", "w", newline="") as file:
+    out_csv_path = "data/repos.csv"
+
+    # Create a different file for testing.
+    if repo_types == ["test"]:
+        out_csv_path = "data/test_repos.csv"
+
+    with open(out_csv_path, "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(["owner", "name", "created", "pr_count"])
-        cur_cursor = ""
-        while True:
-            query_results = get_repos_after(repo_query, cur_cursor)
-            next_cursor = process_query_results(writer, query_results)
-            if next_cursor == "":
-                break
-            cur_cursor = next_cursor
+        writer.writerow([
+            "owner",
+            "name",
+            "created",
+            "pr_count",
+            "repo_type"
+        ])
+        for repo_type in repo_types:
+            repo_query = get_query_from_repo_type(repo_type)
+            cur_cursor = ""
+            while True:
+                query_results = get_repos_after(repo_query, cur_cursor)
+                next_cursor = process_query_results(
+                    writer,
+                    query_results,
+                    repo_type
+                )
+                if next_cursor == "":
+                    break
+                cur_cursor = next_cursor
 
 
 if __name__ == "__main__":

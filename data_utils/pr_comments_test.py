@@ -25,16 +25,11 @@ import pr_comments
 class PrCommentsTest(unittest.TestCase):
     """ PR Comments test class. """
 
-    def test_get_comments_no_args(self):
-        """ Test to check if missing arguments will raise exception. """
-        sys.argv = ["repos.py"]
-        with self.assertRaises(Exception):
-            pr_comments.main()
-
-    def test_get_comments_no_file(self):
-        """ Test to check if unsupported arguments will raise exception. """
-        sys.argv = ["repos.py", "repo_type"]
-        self.assertFalse(os.path.isfile("data/repo_type.csv"))
+    @patch("os.path.isfile")
+    def test_get_comments_no_file(self, mock_results):
+        """ Test to check missing file will raise exception. """
+        mock_results.return_value = False
+        self.assertFalse(os.path.isfile("data/repos.csv"))
         with self.assertRaises(Exception):
             pr_comments.main()
 
@@ -46,8 +41,13 @@ class PrCommentsTest(unittest.TestCase):
             "createdAt": "test date",
             "body": "test body!"
         }
-        self.assertEqual(
-            pr_comments.process_comment(test_comment)[2], "deleted-user")
+        host_usernames = set()
+        repo_type = "test_type"
+        self.assertEqual(pr_comments.process_comment(
+            repo_type,
+            host_usernames,
+            test_comment
+        )[2], "deleted-user")
 
     def test_process_comment_no_body(self):
         """ Test to check comment processing when data has no body. """
@@ -57,26 +57,67 @@ class PrCommentsTest(unittest.TestCase):
             "createdAt": "test date",
             "body": ""
         }
-        self.assertIsNone(pr_comments.process_comment(test_comment))
+        host_usernames = set()
+        repo_type = "test_type"
+        self.assertIsNone(pr_comments.process_comment(
+            repo_type,
+            host_usernames,
+            test_comment
+        ))
 
-    def test_process_comment(self):
+    def test_process_comment_not_host(self):
         """ Test to check comment processing when data is formatted
-            correctly. """
+            correctly and author is not host. """
         test_comment = {
             "author": {"login": "test login"},
             "resourcePath": "test path",
             "createdAt": "test date",
             "body": "test body"
         }
-        comment_row = pr_comments.process_comment(test_comment)
+        host_usernames = set()
+        repo_type = "test type"
+        comment_row = pr_comments.process_comment(
+            repo_type,
+            host_usernames,
+            test_comment)
         self.assertEqual(comment_row[0], "test path")
         self.assertEqual(comment_row[1], "test date")
         self.assertEqual(comment_row[2], "test login")
         self.assertEqual(comment_row[3], "test body")
+        self.assertEqual(comment_row[4], "test type")
+        self.assertEqual(comment_row[5], False)
+
+    def test_process_comment_is_host(self):
+        """ Test to check comment processing when data is formatted
+            correctly and author is host. """
+        test_comment = {
+            "author": {"login": "test login"},
+            "resourcePath": "test path",
+            "createdAt": "test date",
+            "body": "test body"
+        }
+        host_usernames = {"test login"}
+        repo_type = "test type"
+        comment_row = pr_comments.process_comment(
+            repo_type,
+            host_usernames,
+            test_comment)
+        self.assertEqual(comment_row[0], "test path")
+        self.assertEqual(comment_row[1], "test date")
+        self.assertEqual(comment_row[2], "test login")
+        self.assertEqual(comment_row[3], "test body")
+        self.assertEqual(comment_row[4], "test type")
+        self.assertEqual(comment_row[5], True)
 
     def test_process_comment_no_comment(self):
         """ Test to check comment processing when no comment is given. """
-        self.assertIsNone(pr_comments.process_comment(None))
+        host_usernames = set()
+        repo_type = "test type"
+        self.assertIsNone(pr_comments.process_comment(
+            repo_type,
+            host_usernames,
+            None
+        ))
 
     @patch("pr_comments.get_pr_comments")
     def test_get_pr_comments(self, mock_results):
@@ -154,6 +195,7 @@ class PrCommentsTest(unittest.TestCase):
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
                 self.assertTrue("eyurko" in row["author"])
+                self.assertTrue(True in row["is_host"])
         os.remove(pr_comments_path)
 
 
