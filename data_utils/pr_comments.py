@@ -164,12 +164,14 @@ def main():
     """
     arg_count = len(sys.argv)
 
-    # Check if in testing mode
+    # If no extra arguments are given, then get pull request comments from
+    # all repositories (capstone and starter).
     if arg_count == 1:
         comment_csv = "data/pr_comments.csv"
         repo_csv = "data/repos.csv"
         host_csv = "data/host_usernames.csv"
     else:
+        # If in testing mode, then use testing files.
         if sys.argv[1] == "test":
             comment_csv = "data/test_pr_comments.csv"
             repo_csv = "data/test_repos.csv"
