@@ -62,7 +62,7 @@ def get_pr_stats(name, owner):
     return run_query(query)
 
 
-def process_stats_query_results(writer, result):
+def process_stats_query_results(writer, result, repo_type):
     """ Processes the query results for pull request statistics.
 
     Uses the writer to record the pull request statistics information.
@@ -91,16 +91,15 @@ def process_stats_query_results(writer, result):
             pull_request["resourcePath"], pull_request["number"],
             pull_request["createdAt"], pull_request["closedAt"],
             total_comments,
-            pull_request["deletions"] + pull_request["additions"]
+            pull_request["deletions"] + pull_request["additions"],
+            repo_type
         ])
 
 
 def main():
     """ Retrieves pull request statistics for intern repositories.
 
-    The pull requests retrieved depend on command line arguments. Repositories
-    of different types are stored in different CSV files. Current supported
-    repository types are "starter" and "capstone".
+    Current supported repository types are "starter" and "capstone".
 
     <repo_type>_pr_stats.csv has the following columns:
         pr_path: The resource path to the pull request.
@@ -112,28 +111,35 @@ def main():
             pull request.
     """
 
-    try:
-        repo_type = sys.argv[1]
-    except:
-        raise Exception("Usage: pr_stats.py <repository type>")
+    arg_count = len(sys.argv)
 
-    repo_csv = f"data/{repo_type}_repos.csv"
+    # Check if in testing mode
+    if arg_count == 1:
+        repo_csv = "data/repos.csv"
+        stat_csv = "data/pr_stats.csv"
+    else:
+        if sys.argv[1] == "test":
+            repo_csv = "data/test_repos.csv"
+            stat_csv = "data/test_pr_stats.csv"
 
     if not os.path.isfile(repo_csv):
-        raise Exception(
-            f"The CSV for {repo_type} repositories does not exist.")
+        raise Exception("The CSV for intern repositories does not exist.")
 
     with open(repo_csv, newline="") as in_csv, \
-            open(f"data/{repo_type}_pr_stats.csv", "w", newline="") as out_csv:
+            open(stat_csv, "w", newline="") as out_csv:
         reader = csv.DictReader(in_csv)
         writer = csv.writer(out_csv)
         writer.writerow([
             "pr_path", "pr_number", "created", "closed", "total_comments",
-            "pr_lines_changed"
+            "pr_lines_changed", "repo_type"
         ])
         for row in reader:
             query_results = get_pr_stats(row["name"], row["owner"])
-            process_stats_query_results(writer, query_results)
+            process_stats_query_results(
+                writer,
+                query_results,
+                row["repo_type"]
+            )
 
 
 if __name__ == "__main__":

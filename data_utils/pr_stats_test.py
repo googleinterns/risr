@@ -25,16 +25,11 @@ import pr_stats
 class PrStatsTest(unittest.TestCase):
     """ Repos test class. """
 
-    def test_get_stats_no_args(self):
-        """ Test to check if missing arguments will raise exception. """
-        sys.argv = ["repos.py"]
-        with self.assertRaises(Exception):
-            pr_stats.main()
-
-    def test_get_comments_no_file(self):
-        """ Test to check if unsupported arguments will raise exception. """
-        sys.argv = ["repos.py", "repo_type"]
-        self.assertFalse(os.path.isfile("data/repo_type.csv"))
+    @patch("os.path.isfile")
+    def test_get_stats_no_file(self, mock_results):
+        """ Test to check missing file will raise exception. """
+        mock_results.return_value = False
+        self.assertFalse(os.path.isfile("data/repos.csv"))
         with self.assertRaises(Exception):
             pr_stats.main()
 
@@ -179,6 +174,7 @@ class PrStatsTest(unittest.TestCase):
             for i, row in enumerate(reader, 1):
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
                 self.assertEqual(row["pr_number"], i)
+                self.assertEqual(row["repo_type"], "test_type")
         os.remove(pr_stats_path)
 
 
