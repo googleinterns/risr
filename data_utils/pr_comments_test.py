@@ -194,7 +194,6 @@ class PrCommentsTest(unittest.TestCase):
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
                 self.assertEqual("host1", row["author"])
-                print(row["is_host"])
                 self.assertTrue(row["is_host"])
         os.remove(pr_comments_path)
 
