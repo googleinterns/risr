@@ -18,6 +18,7 @@ import csv
 import os
 import sys
 import unittest
+from unittest.mock import patch
 import host
 
 
@@ -36,11 +37,11 @@ class HostTest(unittest.TestCase):
         with self.assertRaises(Exception):
             host.main()
 
-    def test_output_csv_has_expected_columns(self):
-        """ Test to check if output CSV has three columns. """
-        sys.argv = ["host.py", "test_usernames.csv"]
-
-        with open("test_usernames.csv", "w", newline="") as out_csv:
+    def test_get_hosts_from_teams_csv(self):
+        """ Test to check that method gets hosts from teams CSV file. """
+        # Create test teams CSV.
+        teams_file = "data/test_teams.csv"
+        with open(teams_file, "w", newline="") as out_csv:
             writer = csv.writer(out_csv)
             writer.writerow([
                 "Github username 1",
@@ -48,19 +49,113 @@ class HostTest(unittest.TestCase):
                 "Start Date",
                 "Team Number"
             ])
-            writer.writerow(["user1", "user2", "date1", "number1"])
-            writer.writerow(["user3", "", "date2", "number2"])
+            row_two_hosts = ["host1", "host2", "date1", "team1"]
+            row_only_first_host = ["host3", "", "date2", "team2"]
+            row_only_second_host = ["", "host4", "date3", "team3"]
+            writer.writerows([
+                row_two_hosts,
+                row_only_first_host,
+                row_only_second_host
+            ])
 
-        host.main()
+        host_dict = dict()
+        correct_dict = {
+            "host1": ["date1", "team1"],
+            "host2": ["date1", "team1"],
+            "host3": ["date2", "team2"],
+            "host4": ["date3", "team3"],
+        }
+        host.get_hosts_from_teams_csv(teams_file, host_dict)
+        self.assertDictEqual(host_dict, correct_dict)
+        os.remove("data/test_teams.csv")
 
-        with open("data/host_usernames.csv", newline="") as in_csv:
+    def test_get_interns_from_repo_csv(self):
+        """ Test to check that method gets interns from a CSV file. """
+        repos_file = "data/test_repos.csv"
+        intern_usernames = set()
+        correct_set = {"googleinterns"}
+        host.get_interns_from_repos_csv(repos_file, intern_usernames)
+        self.assertSetEqual(intern_usernames, correct_set)
+
+    @patch("host.get_pr_reviewers")
+    def test_get_hosts_from_pr_reviews(self, mock_results):
+        """ Test that method gets hosts from pull request reviews. """
+
+        # Mock results to test all the supported query result cases.
+        mock_results.return_value = {
+            "data": {
+                "repository": {
+                    "pullRequests": {
+                        "nodes": [{
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "requestedReviewer": {
+                                            "login": "host_reviewer"
+                                        }
+                                    },
+                                    {
+                                        "requestedReviewer": {
+                                            "login": "host_duplicate"
+                                        }
+                                    },
+                                    {
+                                        "requestedReviewer": {}
+                                    },
+                                    {
+                                        "author": {
+                                            "login": "host_author"
+                                        }
+                                    },
+                                    {
+                                        "author": {
+                                            "login": "host_author"
+                                        }
+                                    },
+                                    {
+                                        "author": {
+                                            "login": "intern"
+                                        }
+                                    },
+                                    {},
+                                    {}
+                                ]
+                            }
+                        }]
+                    }
+                }
+            }
+        }
+
+        repos_file = "data/test_repos.csv"
+        host_dict = {
+            "host_duplicate": ["date1", "team1"]
+        }
+        intern_usernames = {"intern"}
+        host.get_hosts_from_pr_reviews(repos_file, host_dict, intern_usernames)
+        correct_dict = {
+            "host_duplicate": ["date1", "team1"],
+            "host_reviewer": ["unknown", "unknown"],
+            "host_author": ["unknown", "unknown"],
+        }
+        self.assertDictEqual(host_dict, correct_dict)
+
+    def test_write_host_information(self):
+        """ Test that host information is written correctly to CSV file. """
+        hosts_file = "data/test_create_host_info.csv"
+        host_dict = {
+            "host1": ["date1", "team1"],
+            "host2": ["date1", "team1"],
+            "host3": ["date2", "team2"]
+        }
+        host.write_host_information(hosts_file, host_dict)
+        with open(hosts_file, newline="") as in_csv:
             reader = csv.reader(in_csv)
             self.assertEqual(next(reader), ["username", "start_date", "team"])
-            self.assertEqual(next(reader), ["user1", "date1", "number1"])
-            self.assertEqual(next(reader), ["user2", "date1", "number1"])
-            self.assertEqual(next(reader), ["user3", "date2", "number2"])
-
-        os.remove("test_usernames.csv")
+            self.assertEqual(next(reader), ["host1", "date1", "team1"])
+            self.assertEqual(next(reader), ["host2", "date1", "team1"])
+            self.assertEqual(next(reader), ["host3", "date2", "team2"])
+        os.remove(hosts_file)
 
 
 if __name__ == "__main__":
