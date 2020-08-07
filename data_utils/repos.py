@@ -133,17 +133,19 @@ def get_query_from_repo_type(repo_type):
     repo_query = ""
     if repo_type == "starter":
         # This query looks for a specific string in a repository README.md file.
+        # Ignores repositories created in the googleinterns organization.
         repo_query = query_generator(
             search="git clone https://github.com/googleinterns/step.git",
             loc="in:readme",
-            sort="sort:created-asc")
+            sort="sort:created-asc",
+            org="-org:googleinterns")
 
     elif repo_type == "capstone":
         # This query follows the STEP capstone repository naming conventions
         # and creation dates.
         repo_query = query_generator(search="step 2020",
                                      loc="in:name",
-                                     org="googleinterns",
+                                     org="org:googleinterns",
                                      created="created:>2020-06-17",
                                      sort="sort:created-asc")
 
@@ -151,7 +153,7 @@ def get_query_from_repo_type(repo_type):
         # Look for the RISR repository.
         repo_query = query_generator(search="risr",
                                      loc="in:name",
-                                     org="googleinterns")
+                                     org="org:googleinterns")
 
     return repo_query
 
