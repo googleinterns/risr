@@ -103,7 +103,7 @@ def process_reviewer_query_results(result, host_dict, intern_usernames):
             # Special case in which host account has been deleted
             try:
                 host_username = host["login"]
-            except KeyError:
+            except TypeError:
                 continue
 
             # Check if host is already in dictionary and if intern reviewed
