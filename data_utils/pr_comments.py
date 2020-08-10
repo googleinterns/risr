@@ -169,13 +169,13 @@ def main():
     if arg_count == 1:
         comment_csv = "data/pr_comments.csv"
         repo_csv = "data/repos.csv"
-        host_csv = "data/host_usernames.csv"
+        host_csv = "data/host_info.csv"
     else:
         # If in testing mode, then use testing files.
         if sys.argv[1] == "test":
             comment_csv = "data/test_pr_comments.csv"
             repo_csv = "data/test_repos.csv"
-            host_csv = "data/test_host_usernames.csv"
+            host_csv = "data/test_host_info.csv"
 
     if not os.path.isfile(repo_csv):
         raise Exception("The CSV for intern repositories does not exist.")

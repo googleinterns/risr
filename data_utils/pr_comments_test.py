@@ -128,7 +128,7 @@ class PrCommentsTest(unittest.TestCase):
         The generated test files are deleted upon test completion.
         """
 
-        # Mock results: first three comments from eyurko in a pull request
+        # Mock results: first three comments from host1 in a pull request
         # pylint: disable=line-too-long
         mock_results.return_value = {
             "data": {
@@ -143,31 +143,31 @@ class PrCommentsTest(unittest.TestCase):
                                     "resourcePath":
                                     "/googleinterns/risr/pull/1#pullrequestreview-429318666",
                                     "body":
-                                    "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
+                                    "comment1",
                                     "createdAt": "2020-06-11T21:51:20Z",
                                     "author": {
-                                        "login": "eyurko"
+                                        "login": "host1"
                                     },
                                     "comments": {
                                         "nodes": [{
                                             "resourcePath":
                                             "/googleinterns/risr/pull/1#discussion_r439090660",
                                             "body":
-                                            "Add a comment explaining this / what this does",
+                                            "comment2",
                                             "createdAt":
                                             "2020-06-11T21:51:20Z",
                                             "author": {
-                                                "login": "eyurko"
+                                                "login": "host1"
                                             }
                                         }, {
                                             "resourcePath":
                                             "/googleinterns/risr/pull/1#discussion_r439092264",
                                             "body":
-                                            "If possible, unnest functions -- improves readability",
+                                            "comment3",
                                             "createdAt":
                                             "2020-06-11T21:53:36Z",
                                             "author": {
-                                                "login": "eyurko"
+                                                "login": "host1"
                                             }
                                         }]
                                     }
@@ -190,12 +190,11 @@ class PrCommentsTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(pr_comments_path))
         with open(pr_comments_path) as in_csv:
             reader = csv.DictReader(in_csv)
-            self.assertEqual(len(list(reader)), 3)
             for row in reader:
                 self.assertTrue(
                     "/googleinterns/risr/pull/" in row["comment_path"])
-                self.assertTrue("eyurko" in row["author"])
-                self.assertTrue(True in row["is_host"])
+                self.assertEqual("host1", row["author"])
+                self.assertTrue(row["is_host"])
         os.remove(pr_comments_path)
 
 
