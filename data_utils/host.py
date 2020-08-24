@@ -18,6 +18,7 @@
 import csv
 import os
 import sys
+from datetime import datetime
 from query import run_query
 
 
@@ -40,10 +41,8 @@ def get_pr_reviewers(name, owner):
         repository(name: "{name}", owner: "{owner}") {{
             pullRequests(first: 5) {{
                 nodes {{
+                    createdAt
                     resourcePath
-                    author {{
-                        login
-                    }}
                     timelineItems(first: 100) {{
                         nodes {{
                             ... on ReviewRequestedEvent {{
@@ -90,6 +89,14 @@ def process_reviewer_query_results(result, host_dict, intern_usernames):
             "Query results for reviewers does not have a structure that is"
             " currently supported by RISR.")
 
+    start_dates = [
+        "2020-05-18",
+        "2020-06-15",
+        "2020-07-06"
+        ]
+
+    start_dates = [datetime.fromisoformat(date) for date in start_dates]
+
     for pull_request in pull_requests:
         timeline_items = pull_request["timelineItems"]["nodes"]
         for review_item in timeline_items:
@@ -103,15 +110,26 @@ def process_reviewer_query_results(result, host_dict, intern_usernames):
             # Special case in which host account has been deleted
             try:
                 host_username = host["login"]
-            except TypeError:
+            except (TypeError, KeyError):
                 continue
 
             # Check if host is already in dictionary and if intern reviewed
             # their own pull request.
             if host_username not in host_dict and \
                 host_username not in intern_usernames:
-                # Start date and team number are unknown in this case.
-                host_dict[host_username] = ["unknown", "unknown"]
+                date_created = datetime.fromisoformat(pull_request["createdAt"][:-1])
+
+                start_date = start_dates[0]
+                for date in start_dates:
+                    if date <= date_created:
+                        start_date = date
+                    else:
+                        break
+
+                start_date = start_date.strftime("%-m/%-d/%Y")
+
+                # Team number is unknown in this case.
+                host_dict[host_username] = [start_date, "unknown"]
 
 
 def get_hosts_from_teams_csv(teams_file, host_dict):
@@ -154,7 +172,12 @@ def get_hosts_from_pr_reviews(repos_file, host_dict, intern_usernames):
     """ Gets host username based on pull request reviewers.
 
     Only checks starter project repositories because the capstone projects
-    had a peer review component.
+    had a peer review component. Capstone repositories, which are made in the
+    googleinterns organization, are ignored.
+
+    The test repo_type is used for testing and refers to the RISR repository.
+    Although RISR is owned by the googleinterns organization, it should not be
+    skipped.
 
     Args.
         repos_file: File name for the repository CSV.
@@ -165,6 +188,9 @@ def get_hosts_from_pr_reviews(repos_file, host_dict, intern_usernames):
         reader = csv.DictReader(in_csv)
         for row in reader:
             if row["repo_type"] == "capstone":
+                continue
+            # Ignore repositories made in the googleinterns organization.
+            if row["owner"] == "googleinterns" and row["repo_type"] != "test":
                 continue
             query_results = get_pr_reviewers(row["name"], row["owner"])
             process_reviewer_query_results(
