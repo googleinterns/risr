@@ -42,6 +42,8 @@ def main():
     if not os.path.isfile(comments_file):
         raise Exception("The CSV for code review comments does not exist.")
 
+    # Program is deterministic so that the same comments can be selected in
+    # multiple runs. Delete line if nondeterministic behavior is desired.
     random.seed(10)
     with open(comments_file, newline="") as in_csv, \
          open(training_file, "w", newline="") as out_csv:

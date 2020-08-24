@@ -172,7 +172,12 @@ def get_hosts_from_pr_reviews(repos_file, host_dict, intern_usernames):
     """ Gets host username based on pull request reviewers.
 
     Only checks starter project repositories because the capstone projects
-    had a peer review component.
+    had a peer review component. Capstone repositories, which are made in the
+    googleinterns organization, are ignored.
+
+    The test repo_type is used for testing and refers to the RISR repository.
+    Although RISR is owned by the googleinterns organization, it should not be
+    skipped.
 
     Args.
         repos_file: File name for the repository CSV.
