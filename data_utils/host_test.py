@@ -101,7 +101,7 @@ class HostTest(unittest.TestCase):
                                         }
                                     },
                                     {
-                                        "requestedReviewer": {}
+                                        "requestedReviewer": None
                                     },
                                     {
                                         "author": {

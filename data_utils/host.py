@@ -133,7 +133,7 @@ def process_reviewer_query_results(result, host_dict, intern_usernames):
 
 
 def get_hosts_from_teams_csv(teams_file, host_dict):
-    """ Gets host information from the internal STEP teams CSV file.
+    """ Gets host information from the STEP teams CSV file.
 
     Args:
         teams_file: File name for STEP teams CSV.
