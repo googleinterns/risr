@@ -14,33 +14,45 @@
 
 """ Module for code review comment classification. """
 
-
 import csv
 import os
 import random
-
-
-def create_training_dataset(comments_file):
-	random.seed(10)
-	training_file = "data/training_comments.csv"
-	with open(comments_file, newline="") as in_csv, \
-		 open(training_file, "w", newline="") as out_csv:
-		reader = csv.reader(in_csv)
-		writer = csv.writer(out_csv)
-		# Ignore first row of comments CSV.
-		header_row = next(reader)
-		all_comments = list(reader)
-		training_comments = random.choices(all_comments, k=200)
-		writer.writerow(header_row)
-		writer.writerows(training_comments)
-
+import sys
 
 
 def main():
-	comments_file = "data/pr_comments.csv"
-	if not os.path.isfile(comments_file):
-		raise Exception("The CSV for code review comments does not exist.")
-	create_training_dataset(comments_file)
+    """" Creates training dataset with 200 host code review comments.
+
+    The 200 comments from hosts are selected at random.
+
+    Args:
+        comments_file: CSV containing all code review comments.
+    """
+
+    if len(sys.argv) == 1:
+        comments_file = "data/pr_comments.csv"
+        training_file = "data/training_comments.csv"
+    else:
+        if sys.argv[1] == "test":
+            comments_file = "data/test_pr_comments.csv"
+            training_file = "data/test_training_comments.csv"
+        else:
+            raise Exception("Invalid command line argument.")
+
+    if not os.path.isfile(comments_file):
+        raise Exception("The CSV for code review comments does not exist.")
+
+    random.seed(10)
+    with open(comments_file, newline="") as in_csv, \
+         open(training_file, "w", newline="") as out_csv:
+        reader = csv.reader(in_csv)
+        writer = csv.writer(out_csv)
+        headers = next(reader)
+        host_comments = [row for row in reader if row[5] == "True"]
+        num_comments = min(200, len(host_comments))
+        training_comments = random.choices(host_comments, k=num_comments)
+        writer.writerow(headers)
+        writer.writerows(training_comments)
 
 
 if __name__ == "__main__":

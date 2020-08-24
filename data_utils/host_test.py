@@ -87,6 +87,7 @@ class HostTest(unittest.TestCase):
                 "repository": {
                     "pullRequests": {
                         "nodes": [{
+                            "createdAt": "2020-06-26T22:26:47Z",
                             "timelineItems": {
                                 "nodes": [
                                     {
@@ -135,9 +136,11 @@ class HostTest(unittest.TestCase):
         host.get_hosts_from_pr_reviews(repos_file, host_dict, intern_usernames)
         correct_dict = {
             "host_duplicate": ["date1", "team1"],
-            "host_reviewer": ["unknown", "unknown"],
-            "host_author": ["unknown", "unknown"],
+            "host_reviewer": ["6/15/2020", "unknown"],
+            "host_author": ["6/15/2020", "unknown"],
         }
+        print(host_dict)
+        print(correct_dict)
         self.assertDictEqual(host_dict, correct_dict)
 
     def test_write_host_information(self):
