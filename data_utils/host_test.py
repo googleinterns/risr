@@ -139,8 +139,6 @@ class HostTest(unittest.TestCase):
             "host_reviewer": ["6/15/2020", "unknown"],
             "host_author": ["6/15/2020", "unknown"],
         }
-        print(host_dict)
-        print(correct_dict)
         self.assertDictEqual(host_dict, correct_dict)
 
     def test_write_host_information(self):

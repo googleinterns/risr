@@ -64,7 +64,7 @@ class CommentClassTest(unittest.TestCase):
                 self.assertEqual(row["is_host"], "True")
                 num_rows += 1
             self.assertEqual(num_rows, 3)
-        # os.remove(test_file_path)
+        os.remove(test_file_path)
 
 if __name__ == "__main__":
     unittest.main()
