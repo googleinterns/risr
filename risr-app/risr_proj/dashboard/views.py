@@ -16,8 +16,8 @@
 """ Module that defines different views for the dashboard app."""
 
 import os
+import csv
 import json
-import pandas as pd
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -37,13 +37,13 @@ def dashboard_list(request):
         A rest_framework.Response instance containing the data, if any.
     """
     if request.method == 'GET':
-        df = pd.read_csv(
-            os.path.join(settings.BASE_DIR, 'data/cap_pr_count.csv'))
-        pr_data = df.to_dict(orient='records')
-
-        df = pd.read_csv(
-            os.path.join(settings.BASE_DIR, 'data/data_stacked.csv'))
-        stacked_data = df.to_dict(orient='records')
-        data = {'pr_data': pr_data, 'stacked_data': stacked_data}
+        with open(os.path.join(settings.BASE_DIR, 'data/cap_pr_count.csv')) as csv_in:
+            reader = csv.DictReader(csv_in)
+            data = []
+            for row in reader:
+                data.append({
+                    'pr_range': row['pr_range'],
+                    'repo_count': int(row['repo_count'])
+                })
         return Response(json.dumps(data))
     return Response()
