@@ -25,12 +25,6 @@ import pr_stats
 class PrStatsTest(unittest.TestCase):
     """ Repos test class. """
 
-    def test_get_stats_no_args(self):
-        """ Test to check if missing arguments will raise exception. """
-        sys.argv = ["repos.py"]
-        with self.assertRaises(Exception):
-            pr_stats.main()
-
     def test_get_comments_no_file(self):
         """ Test to check if unsupported arguments will raise exception. """
         sys.argv = ["repos.py", "repo_type"]
@@ -49,120 +43,112 @@ class PrStatsTest(unittest.TestCase):
 
         # Mock results: pull requests for RISR repository.
         # pylint: disable=line-too-long
-        mock_results.return_value = {
-            "data": {
-                "repository": {
-                    "pullRequests": {
-                        "nodes": [{
-                            "resourcePath": "/googleinterns/risr/pull/1",
-                            "number": 1,
-                            "createdAt": "2020-06-11T20:54:31Z",
-                            "closedAt": "2020-06-12T19:36:08Z",
-                            "deletions": 0,
-                            "additions": 653,
-                            "comments": {
-                                "totalCount": 0
-                            },
-                            "reviews": {
-                                "nodes": [{
-                                    "body":
-                                    "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
-                                    "comments": {
-                                        "totalCount": 3
-                                    }
-                                }, {
-                                    "body": "",
-                                    "comments": {
-                                        "totalCount": 1
-                                    }
-                                }, {
-                                    "body":
-                                    "much easier to read. Just remember to have a blank line at the end of files -- if you can get the linter up and running that'll be caught during the travis check.",
-                                    "comments": {
-                                        "totalCount": 2
-                                    }
-                                }, {
-                                    "body": "LGTM; just fix a couple nits.",
-                                    "comments": {
-                                        "totalCount": 2
-                                    }
-                                }]
-                            }
-                        }, {
-                            "resourcePath": "/googleinterns/risr/pull/2",
-                            "number": 2,
-                            "createdAt": "2020-06-12T22:01:36Z",
-                            "closedAt": "2020-06-24T16:30:31Z",
-                            "deletions": 48,
-                            "additions": 631,
-                            "comments": {
-                                "totalCount": 0
-                            },
-                            "reviews": {
-                                "nodes": [{
-                                    "body": "",
-                                    "comments": {
-                                        "totalCount": 1
-                                    }
-                                }, {
-                                    "body":
-                                    "The .pylintrc is aggro, but I'm fine with refactoring it if needed when it comes up.",
-                                    "comments": {
-                                        "totalCount": 0
-                                    }
-                                }]
-                            }
-                        }, {
-                            "resourcePath": "/googleinterns/risr/pull/3",
-                            "number": 3,
-                            "createdAt": "2020-06-24T16:36:50Z",
-                            "closedAt": "2020-06-24T20:25:02Z",
-                            "deletions": 19,
-                            "additions": 61,
-                            "comments": {
-                                "totalCount": 1
-                            },
-                            "reviews": {
-                                "nodes": [{
-                                    "body": "tests?",
-                                    "comments": {
-                                        "totalCount": 2
-                                    }
-                                }, {
-                                    "body": "",
-                                    "comments": {
-                                        "totalCount": 1
-                                    }
-                                }, {
-                                    "body": "",
-                                    "comments": {
-                                        "totalCount": 1
-                                    }
-                                }, {
-                                    "body": "",
-                                    "comments": {
-                                        "totalCount": 0
-                                    }
-                                }]
-                            }
-                        }, {
-                            "resourcePath": "/googleinterns/risr/pull/4",
-                            "number": 4,
-                            "createdAt": "2020-06-26T22:26:47Z",
-                            "closedAt": None,
-                            "deletions": 32,
-                            "additions": 392,
-                            "comments": {
-                                "totalCount": 0
-                            },
-                            "reviews": {
-                                "nodes": []
-                            }
-                        }]
-                    }
+        mock_results.return_value = [
+            {
+                "resourcePath": "/googleinterns/risr/pull/1",
+                "number": 1,
+                "createdAt": "2020-06-11T20:54:31Z",
+                "closedAt": "2020-06-12T19:36:08Z",
+                "deletions": 0,
+                "additions": 653,
+                "comments": {
+                    "totalCount": 0
+                },
+                "reviews": {
+                    "nodes": [{
+                        "body": "text1",
+                        "comments": {
+                            "totalCount": 3
+                        }
+                    }, {
+                        "body": "",
+                        "comments": {
+                            "totalCount": 1
+                        }
+                    }, {
+                        "body":
+                        "text2",
+                        "comments": {
+                            "totalCount": 2
+                        }
+                    }, {
+                        "body": "text3",
+                        "comments": {
+                            "totalCount": 2
+                        }
+                    }]
                 }
-            }
-        }
+            }, {
+                "resourcePath": "/googleinterns/risr/pull/2",
+                "number": 2,
+                "createdAt": "2020-06-12T22:01:36Z",
+                "closedAt": "2020-06-24T16:30:31Z",
+                "deletions": 48,
+                "additions": 631,
+                "comments": {
+                    "totalCount": 0
+                },
+                "reviews": {
+                    "nodes": [{
+                        "body": "",
+                        "comments": {
+                            "totalCount": 1
+                        }
+                    }, {
+                        "body":
+                        "text4",
+                        "comments": {
+                            "totalCount": 0
+                        }
+                    }]
+                }
+            }, {
+                "resourcePath": "/googleinterns/risr/pull/3",
+                "number": 3,
+                "createdAt": "2020-06-24T16:36:50Z",
+                "closedAt": "2020-06-24T20:25:02Z",
+                "deletions": 19,
+                "additions": 61,
+                "comments": {
+                    "totalCount": 1
+                },
+                "reviews": {
+                    "nodes": [{
+                        "body": "text5",
+                        "comments": {
+                            "totalCount": 2
+                        }
+                    }, {
+                        "body": "",
+                        "comments": {
+                            "totalCount": 1
+                        }
+                    }, {
+                        "body": "",
+                        "comments": {
+                            "totalCount": 1
+                        }
+                    }, {
+                        "body": "",
+                        "comments": {
+                            "totalCount": 0
+                        }
+                    }]
+                }
+            }, {
+                "resourcePath": "/googleinterns/risr/pull/4",
+                "number": 4,
+                "createdAt": "2020-06-26T22:26:47Z",
+                "closedAt": None,
+                "deletions": 32,
+                "additions": 392,
+                "comments": {
+                    "totalCount": 0
+                },
+                "reviews": {
+                    "nodes": []
+                }
+            }]
 
         pr_stats_path = "data/test_pr_stats.csv"
 

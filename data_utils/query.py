@@ -50,8 +50,10 @@ def run_query(query):
     if request.status_code == requests.codes.ok:
         result = request.json()
         if "errors" in result.keys():
-            raise Exception("There was an error in the Github API query.",
-                            result)
+            print("There was an error in the Github API query.",
+                  result)
+            return []
         return result
 
-    raise Exception("Request to Github GraphQL API failed.")
+    print("Request to Github GraphQL API failed.")
+    return []

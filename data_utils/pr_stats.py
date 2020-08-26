@@ -59,10 +59,17 @@ def get_pr_stats(name, owner):
         }}
     }}"""
 
-    return run_query(query)
+    result = run_query(query)
+    try:
+        pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
+        return pull_requests
+    except KeyError:
+        print(f"PR statistics results for {owner}/{name} does not have a"
+              "structure that is currently supported by RISR.")
+        return []
 
 
-def process_stats_query_results(writer, result):
+def process_stats_query_results(writer, pull_requests):
     """ Processes the query results for pull request statistics.
 
     Uses the writer to record the pull request statistics information.
@@ -74,12 +81,6 @@ def process_stats_query_results(writer, result):
     Returns:
         None.
     """
-    try:
-        pull_requests = result["data"]["repository"]["pullRequests"]["nodes"]
-    except:
-        raise Exception(
-            "Query results for PR statistics does not have a structure that is"
-            " currently supported by RISR.")
 
     for pull_request in pull_requests:
         total_comments = pull_request["comments"]["totalCount"]
@@ -98,9 +99,9 @@ def process_stats_query_results(writer, result):
 def main():
     """ Retrieves pull request statistics for intern repositories.
 
-    The pull requests retrieved depend on command line arguments. Repositories
-    of different types are stored in different CSV files. Current supported
-    repository types are "starter" and "capstone".
+    The pull requests retrieved depend on command line arguments. If there
+    are no arguments, statistics for "starter" and "capstone" repositories
+    will be retrieved by default.
 
     <repo_type>_pr_stats.csv has the following columns:
         pr_path: The resource path to the pull request.
@@ -112,19 +113,26 @@ def main():
             pull request.
     """
 
-    try:
-        repo_type = sys.argv[1]
-    except:
-        raise Exception("Usage: pr_stats.py <repository type>")
+    arg_count = len(sys.argv)
 
-    repo_csv = f"data/{repo_type}_repos.csv"
+    # If no extra arguments are given, then get pull request comments from
+    # all repositories (capstone and starter).
+    if arg_count == 1:
+        repo_csv = "data/repos.csv"
+        stats_csv = "data/pr_stats.csv"
+    else:
+        # If in testing mode, then use testing files.
+        if sys.argv[1] == "test":
+            repo_csv = "data/test_repos.csv"
+            stats_csv = "data/test_pr_stats.csv"
+        else:
+            raise Exception(f"Unsupported mode {sys.argv[1]}.")
 
     if not os.path.isfile(repo_csv):
-        raise Exception(
-            f"The CSV for {repo_type} repositories does not exist.")
+        raise Exception("The CSV for repositories does not exist.")
 
     with open(repo_csv, newline="") as in_csv, \
-            open(f"data/{repo_type}_pr_stats.csv", "w", newline="") as out_csv:
+            open(stats_csv, "w", newline="") as out_csv:
         reader = csv.DictReader(in_csv)
         writer = csv.writer(out_csv)
         writer.writerow([
