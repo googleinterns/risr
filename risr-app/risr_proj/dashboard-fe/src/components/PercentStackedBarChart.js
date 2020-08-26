@@ -49,7 +49,7 @@ class BarChart extends Component {
       // Helper functions for d3.
       xScale: d3
         .scaleBand()
-        .range([margin.left, width - margin.right - 30])
+        .range([margin.left, width - margin.right - 50])
         .padding(0.2),
       yScale: d3
         .scaleLinear()

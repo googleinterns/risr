@@ -23,7 +23,6 @@ import {Container} from 'reactstrap';
 import BarChart from './BarChart';
 import PercentStackedBarChart from './PercentStackedBarChart';
 import StandardStackedBarChart from './StandardStackedBarChart';
-import '../constants/style.css';
 
 import axios from 'axios';
 

@@ -49,7 +49,7 @@ class BarChart extends Component {
       // Helper functions for d3.
       xScale: d3
         .scaleBand()
-        .range([margin.left, width - margin.right - 30])
+        .range([margin.left, width - margin.right - 50])
         .padding(0.2),
       yScale: d3.scaleLinear().range([height - margin.bottom, margin.top]),
     };
@@ -66,7 +66,7 @@ class BarChart extends Component {
    * Append bars to the SVG chart based on data in the component props.
    */
   drawBars() {
-    const {data} = this.props;
+    const data = JSON.parse(JSON.stringify(this.props.data));
 
     // Check if the data has been loaded.
     if (!data) return;
