@@ -15,7 +15,7 @@
  */
 
 /**
- * @fileoverview Percent stacked bar chart component of the React app.
+ * @fileoverview Stand stacked bar chart component of the React app.
  */
 
 import React, {Component} from 'react';
@@ -51,10 +51,7 @@ class BarChart extends Component {
         .scaleBand()
         .range([margin.left, width - margin.right - 30])
         .padding(0.2),
-      yScale: d3
-        .scaleLinear()
-        .range([height - margin.bottom, margin.top])
-        .domain([0, 100]),
+      yScale: d3.scaleLinear().range([height - margin.bottom, margin.top]),
     };
     this.xAxis = d3.axisBottom().scale(this.state.xScale).tickSizeOuter(0);
     this.yAxis = d3.axisLeft().scale(this.state.yScale);
@@ -82,20 +79,20 @@ class BarChart extends Component {
       })
       .keys();
 
-    const {xScale, yScale} = this.state;
-    xScale.domain(weeks);
-
-    data.forEach(function (d) {
+    const totalCountMax = d3.max(data, function (d) {
       let total = 0;
       for (let cat in categories) {
         const name = categories[cat];
         total += +d[name];
       }
-      for (let cat in categories) {
-        const name = categories[cat];
-        d[name] = (d[name] / total) * 100;
-      }
+      return total;
     });
+
+    const roundedMax = Math.ceil(totalCountMax / 10) * 10;
+
+    const {xScale, yScale} = this.state;
+    xScale.domain(weeks);
+    yScale.domain([0, roundedMax]);
 
     const stackedData = d3.stack().keys(categories)(data);
 
@@ -198,7 +195,7 @@ class BarChart extends Component {
       .attr('y', margin.top / 2)
       .attr('text-anchor', 'middle')
       .attr('font-size', '20px')
-      .text('Comment categories by week (%)');
+      .text('Comment categories by week');
     // Add y-axis label
     d3.select(this.chartRef.current)
       .append('text')
@@ -206,7 +203,7 @@ class BarChart extends Component {
       .attr('y', margin.left / 3)
       .attr('transform', 'rotate(-90)')
       .attr('text-anchor', 'middle')
-      .text('Percentage of comments');
+      .text('Comment Count');
     // Add x-axis label
     d3.select(this.chartRef.current)
       .append('text')

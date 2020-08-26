@@ -137,14 +137,16 @@ class BarChart extends Component {
    */
   render() {
     return (
-      <svg ref={this.chartRef} width={width} height={height}>
-        <g ref={this.barRef} />
-        <g
-          ref={this.xAxisRef}
-          transform={`translate(0, ${height - margin.bottom})`}
-        />
-        <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
-      </svg>
+      <div style={{padding: '20px'}}>
+        <svg ref={this.chartRef} width={width} height={height}>
+          <g ref={this.barRef} />
+          <g
+            ref={this.xAxisRef}
+            transform={`translate(0, ${height - margin.bottom})`}
+          />
+          <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
+        </svg>
+      </div>
     );
   }
 }

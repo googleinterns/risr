@@ -22,6 +22,8 @@ import React, {Component} from 'react';
 import {Container} from 'reactstrap';
 import BarChart from './BarChart';
 import PercentStackedBarChart from './PercentStackedBarChart';
+import StandardStackedBarChart from './StandardStackedBarChart';
+import '../constants/style.css';
 
 import axios from 'axios';
 
@@ -64,6 +66,7 @@ class Home extends Component {
     return (
       <Container style={{marginTop: '20px'}} className='text-center'>
         <BarChart data={this.state.data.pr_data} />
+        <StandardStackedBarChart data={this.state.data.stacked_data} />
         <PercentStackedBarChart data={this.state.data.stacked_data} />
       </Container>
     );
