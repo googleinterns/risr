@@ -37,13 +37,13 @@ def dashboard_list(request):
         A rest_framework.Response instance containing the data, if any.
     """
     if request.method == 'GET':
-        df = pd.read_csv(
+        dataframe = pd.read_csv(
             os.path.join(settings.BASE_DIR, 'data/bar_chart.csv'))
-        bar_data = df.to_dict(orient='records')
+        bar_data = dataframe.to_dict(orient='records')
 
-        df = pd.read_csv(
+        dataframe = pd.read_csv(
             os.path.join(settings.BASE_DIR, 'data/comment_categories.csv'))
-        stacked_data = df.to_dict(orient='records')
+        stacked_data = dataframe.to_dict(orient='records')
         data = {'bar_data': bar_data, 'stacked_data': stacked_data}
         print(json.dumps(data))
         return Response(json.dumps(data))
