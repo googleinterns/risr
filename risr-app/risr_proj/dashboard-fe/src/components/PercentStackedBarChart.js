@@ -20,17 +20,17 @@
 
 import React, {Component} from 'react';
 import * as d3 from 'd3';
-import PropTypes from 'prop-types';
+import { CHART_WIDTH, CHART_HEIGHT } from '../constants/index';
 
 // Set the dimensions and margins of the graph
+const width = CHART_WIDTH;
+const height = CHART_HEIGHT;
 const margin = {
   top: 30,
   right: 30,
   bottom: 40,
   left: 50,
 };
-const width = 650;
-const height = 400;
 
 /**
  * Bar chart component. Currently only supports data for the capstone repository
