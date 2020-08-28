@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 /*
  * Copyright 2020 Google LLC
  *
@@ -20,7 +21,8 @@
 
 import React, {Component} from 'react';
 import * as d3 from 'd3';
-import { CHART_WIDTH, CHART_HEIGHT } from '../constants/index';
+import PropTypes from 'prop-types';
+import {CHART_WIDTH, CHART_HEIGHT} from '../constants/index';
 
 // Set the dimensions and margins of the graph
 const width = CHART_WIDTH;
@@ -33,8 +35,7 @@ const margin = {
 };
 
 /**
- * Bar chart component. Currently only supports data for the capstone repository
- * pull request counts.
+ * Percent stacked bar chart component.
  */
 class PercentStackedBarChart extends Component {
   /**
@@ -44,7 +45,7 @@ class PercentStackedBarChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // Array of rectangles for the bar chart.
+      // Array of rectangles for the chart.
       bars: [],
       // Helper functions for d3.
       xScale: d3
@@ -77,7 +78,7 @@ class PercentStackedBarChart extends Component {
     const categories = d3.keys(data[0]).slice(1);
 
     const weeks = d3
-      .map(data, function (d) {
+      .map(data, function(d) {
         return d.week;
       })
       .keys();
@@ -85,14 +86,14 @@ class PercentStackedBarChart extends Component {
     const {xScale, yScale} = this.state;
     xScale.domain(weeks);
 
-    data.forEach(function (d) {
+    data.forEach(function(d) {
       let total = 0;
-      for (let cat in categories) {
-        const name = categories[cat];
+      for (let i = 0; i < categories.length; i++) {
+        const name = categories[i];
         total += +d[name];
       }
-      for (let cat in categories) {
-        const name = categories[cat];
+      for (let i = 0; i < categories.length; i++) {
+        const name = categories[i];
         d[name] = (d[name] / total) * 100;
       }
     });
@@ -102,7 +103,7 @@ class PercentStackedBarChart extends Component {
     const colors = d3.scaleOrdinal().domain(data).range(d3.schemeSet3);
 
     // Create tooltip
-    let tooltip = d3
+    const tooltip = d3
       .select(this.divRef.current)
       .append('div')
       .style('opacity', 0)
@@ -113,32 +114,33 @@ class PercentStackedBarChart extends Component {
       .style('border-radius', '5px')
       .style('padding', '10px');
 
-    const mouseover = function (d) {
+    const mouseover = function(d) {
       const categoryName = d3.select(this.parentNode).datum().key;
       const categoryValue = d.data[categoryName];
       tooltip
         .html('category: ' + categoryName + '<br> count: ' + categoryValue)
         .style('opacity', 1);
     };
-    const mousemove = function (d) {
+    const mousemove = function(d) {
       tooltip
         .style('left', d3.event.pageX + 20 + 'px')
         .style('top', d3.event.pageY + 'px');
     };
-    const mouseleave = function (d) {
+    const mouseleave = function(d) {
       tooltip.style('opacity', 0);
     };
 
+    // Draw bars
     d3.select(this.barRef.current)
       .selectAll('g')
       .data(stackedData)
       .enter()
       .append('g')
-      .attr('fill', function (d) {
+      .attr('fill', function(d) {
         return colors(d.key);
       })
       .selectAll('rect')
-      .data(function (d) {
+      .data(function(d) {
         return d;
       })
       .enter()
@@ -151,6 +153,7 @@ class PercentStackedBarChart extends Component {
       .on('mousemove', mousemove)
       .on('mouseleave', mouseleave);
 
+    // Add legend
     const legend = d3
       .select(this.barRef.current)
       .selectAll('.legend')
@@ -158,7 +161,7 @@ class PercentStackedBarChart extends Component {
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', function (d, i) {
+      .attr('transform', function(d, i) {
         return 'translate(0,' + i * 20 + ')';
       })
       .style('font', '10px sans-serif');
@@ -176,7 +179,7 @@ class PercentStackedBarChart extends Component {
       .attr('y', 9)
       .attr('dy', '.35em')
       .attr('text-anchor', 'end')
-      .text(function (d) {
+      .text(function(d) {
         return d;
       });
   }

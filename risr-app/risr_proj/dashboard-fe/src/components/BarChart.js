@@ -21,7 +21,7 @@
 import React, {Component} from 'react';
 import * as d3 from 'd3';
 import PropTypes from 'prop-types';
-import { CHART_WIDTH, CHART_HEIGHT } from '../constants/index';
+import {CHART_WIDTH, CHART_HEIGHT} from '../constants/index';
 
 const width = CHART_WIDTH;
 const height = CHART_HEIGHT;
