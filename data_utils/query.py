@@ -16,9 +16,10 @@
 
 import os
 import requests
+from time import sleep
 
 
-def run_query(query):
+def run_query(query, attempt = 1):
     """Sends request to Github GraphQL API v4.
 
     Args:
@@ -54,6 +55,10 @@ def run_query(query):
                   result)
             return []
         return result
-
-    print("Request to Github GraphQL API failed.")
+    if attempt == 1 and (request.status_code  == requests.codes.forbidden
+        or request.status_code == requests.codes.bad_gateway):
+        sleep(1)
+        print(f"Request status code: {request.status_code}. Trying again.")
+        run_query(query, 2)
+    print("Request to Github GraphQL API failed.", request)
     return []
