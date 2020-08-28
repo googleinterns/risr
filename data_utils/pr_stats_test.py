@@ -137,19 +137,13 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "timelineItems": {
                                 "nodes": [
-                                    {},
-                                    {},
-                                    {},
                                     {
                                         "state": "CHANGES_REQUESTED"
                                     },
                                     {},
                                     {
                                         "state": "APPROVED"
-                                    },
-                                    {},
-                                    {},
-                                    {}
+                                    }
                                 ]
                             }
                         }, {
@@ -183,19 +177,13 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "timelineItems": {
                                 "nodes": [
-                                    {},
-                                    {},
-                                    {},
                                     {
                                         "state": "CHANGES_REQUESTED"
                                     },
                                     {},
                                     {
                                         "state": "APPROVED"
-                                    },
-                                    {},
-                                    {},
-                                    {}
+                                    }
                                 ]
                             }
                         }, {
@@ -238,19 +226,13 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "timelineItems": {
                                 "nodes": [
-                                    {},
-                                    {},
-                                    {},
                                     {
                                         "state": "CHANGES_REQUESTED"
                                     },
                                     {},
                                     {
                                         "state": "APPROVED"
-                                    },
-                                    {},
-                                    {},
-                                    {}
+                                    }
                                 ]
                             }
                         }, {
@@ -273,19 +255,13 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "timelineItems": {
                                 "nodes": [
-                                    {},
-                                    {},
-                                    {},
                                     {
                                         "state": "CHANGES_REQUESTED"
                                     },
                                     {},
                                     {
                                         "state": "APPROVED"
-                                    },
-                                    {},
-                                    {},
-                                    {}
+                                    }
                                 ]
                             }
                         }]
