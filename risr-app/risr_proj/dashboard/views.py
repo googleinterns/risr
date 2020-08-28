@@ -38,12 +38,8 @@ def dashboard_list(request):
     """
     if request.method == 'GET':
         df = pd.read_csv(
-            os.path.join(settings.BASE_DIR, 'data/cap_pr_count.csv'))
-        pr_data = df.to_dict(orient='records')
-
-        df = pd.read_csv(
-            os.path.join(settings.BASE_DIR, 'data/data_stacked.csv'))
+            os.path.join(settings.BASE_DIR, 'data/comment_categories.csv'))
         stacked_data = df.to_dict(orient='records')
-        data = {'pr_data': pr_data, 'stacked_data': stacked_data}
+        data = {'stacked_data': stacked_data}
         return Response(json.dumps(data))
     return Response()
