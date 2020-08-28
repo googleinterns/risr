@@ -74,7 +74,52 @@ def get_pr_stats(name, owner):
     }}"""
 
     return run_query(query)
-    
+
+
+def calculate_week(start_date, created_date):
+    """ Calculates the internship week.
+
+    Args:
+        start_date: intern start date in "mm/dd/YYYY" form.
+        created_date: pull request created date in ISO format.
+
+    Returns:
+        Internship week.
+    """
+    start_date = datetime.strptime(start_date, "%m/%d/%Y")
+    days = abs(created_date - start_date).days
+    return days // 7 + 1
+
+
+def get_start_date(participants, host_dict, repo_dates, repo):
+    """ Finds start date based on participants.
+
+    Checks if host participants have start dates associated with them.
+
+    Args:
+        participants: users in the pull request.
+        host_dict: dictionary with host logins as keys and start dates as
+                   values.
+        repo_dates: dictionary mapping repositories to start dates.
+        repo: current repository.
+
+    Returns:
+        Start date or "unknown".
+    """
+    # Special case in which host account has been deleted
+    if repo not in repo_dates:
+        for user in participants:
+            try:
+                cur_username = user["login"]
+            except (TypeError, KeyError):
+                continue
+            if cur_username in host_dict:
+                start_date = host_dict[cur_username]
+                repo_dates[repo] = start_date
+                return start_date
+        return "unknown"
+    return repo_dates[repo]
+
 
 
 def process_stats_query_results(writer, result, host_dict, repo_dates):
@@ -87,6 +132,7 @@ def process_stats_query_results(writer, result, host_dict, repo_dates):
         pull_requests: the results from the query.
         host_dict: dictionary with host logins as keys and start dates as
                    values.
+        repo_dates: dictionary mapping repositories to start dates.
 
     Returns:
         None.
@@ -108,35 +154,21 @@ def process_stats_query_results(writer, result, host_dict, repo_dates):
                 total_comments += 1
             total_comments += review["comments"]["totalCount"]
 
-        created_date = datetime.fromisoformat(pull_request["createdAt"][:-1])
-        if repo not in repo_dates:
-            start_date = "unknown"
-        else:
-            start_date = repo_dates[repo]
-
         participants = pull_request["participants"]["nodes"]
-        for user in participants:
-            # Special case in which host account has been deleted
-            try:
-                cur_username = user["login"]
-            except (TypeError, KeyError):
-                continue
-            if cur_username in host_dict:
-                start_date = host_dict[cur_username]
-                repo_dates[repo] = start_date
-                break
+        start_date = get_start_date(
+            participants, host_dict, repo_dates, repo)
 
         # Calculate week if start_date was found
+        created_date = pull_request["createdAt"][:-1]
+        created_date = datetime.fromisoformat(created_date)
         if start_date != "unknown":
-            start_date = datetime.strptime(start_date, "%m/%d/%Y")
-            days = abs(created_date - start_date).days
-            week = days // 7 + 1
-            start_date = start_date.strftime("%-m/%-d/%Y")
+            week = calculate_week(start_date, created_date)
         else:
             week = "unknown"
 
         created_date = created_date.strftime("%-m/%-d/%Y")
 
+        # Count the number of reviews before PR was closed.
         review_count = 0
         for item in pull_request["timelineItems"]["nodes"]:
             if not item:
@@ -175,11 +207,13 @@ def main():
     if arg_count == 1:
         repo_csv = "data/repos.csv"
         stats_csv = "data/pr_stats.csv"
+        host_csv = "data/host_info.csv"
     else:
         # If in testing mode, then use testing files.
         if sys.argv[1] == "test":
             repo_csv = "data/test_repos.csv"
             stats_csv = "data/test_pr_stats.csv"
+            host_csv = "data/test_host_info.csv"
         else:
             raise Exception(f"Unsupported mode {sys.argv[1]}.")
 
@@ -188,7 +222,7 @@ def main():
 
     # Load a dictionary of known host - start date mappings.
     host_dict = dict()
-    with open("data/host_info.csv", newline="") as in_csv:
+    with open(host_csv, newline="") as in_csv:
         reader = csv.DictReader(in_csv)
         for row in reader:
             host_dict[row["username"]] = row["start_date"]

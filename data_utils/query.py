@@ -15,11 +15,11 @@
 """ Module for sending a request to the Github API. """
 
 import os
-import requests
 from time import sleep
+import requests
 
 
-def run_query(query, attempt = 1):
+def run_query(query, attempt=1):
     """Sends request to Github GraphQL API v4.
 
     Args:
@@ -55,8 +55,11 @@ def run_query(query, attempt = 1):
                   result)
             return []
         return result
-    if attempt == 1 and (request.status_code  == requests.codes.forbidden
-        or request.status_code == requests.codes.bad_gateway):
+
+    # Try to send request again in case it failed due to rate limiting.
+    if (attempt == 1 and
+            (request.status_code == requests.codes.forbidden
+             or request.status_code == requests.codes.bad_gateway)):
         sleep(1)
         print(f"Request status code: {request.status_code}. Trying again.")
         run_query(query, 2)

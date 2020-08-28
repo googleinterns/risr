@@ -15,6 +15,7 @@
 """ Tests for the pr_stats module. """
 
 import csv
+from datetime import datetime
 import os
 import sys
 import unittest
@@ -32,6 +33,53 @@ class PrStatsTest(unittest.TestCase):
         with self.assertRaises(Exception):
             pr_stats.main()
 
+    def test_calculate_week(self):
+        """ Test to check that weeks are calculated correctly. """
+        start_date1 = "05/12/2020"
+        created_date1 = datetime.strptime("05/12/2020", "%m/%d/%Y")
+        week1 = pr_stats.calculate_week(start_date1, created_date1)
+        self.assertEqual(week1, 1)
+
+        start_date2 = "05/12/2020"
+        created_date2 = datetime.strptime("05/18/2020", "%m/%d/%Y")
+        week2 = pr_stats.calculate_week(start_date2, created_date2)
+        self.assertEqual(week2, 1)
+
+        start_date3 = "05/12/2020"
+        created_date3 = datetime.strptime("05/19/2020", "%m/%d/%Y")
+        week3 = pr_stats.calculate_week(start_date3, created_date3)
+        self.assertEqual(week3, 2)
+
+
+    def test_get_start_date(self):
+        """ Test to check if start dates are found correctly based on
+            participants. """
+        participants = [
+            {
+                "login": "user1"
+            },
+            {
+                "login": "user2"
+            },
+            {
+                "login": "user3"
+            }
+        ]
+
+        host_dict = dict()
+        repo_dates = dict()
+        repo = "test_repo"
+        start_date = pr_stats.get_start_date(
+            participants, host_dict, repo_dates, repo)
+        self.assertEqual(start_date, "unknown")
+
+        host_dict["user3"] = "05/12/2020"
+        start_date = pr_stats.get_start_date(
+            participants, host_dict, repo_dates, repo)
+        self.assertEqual(start_date, "05/12/2020")
+        self.assertEqual(repo_dates[repo], "05/12/2020")
+
+
     @patch("pr_stats.get_pr_stats")
     def test_get_pr_stats(self, mock_results):
         """ Test for getting test repository PR statistics.
@@ -43,112 +91,208 @@ class PrStatsTest(unittest.TestCase):
 
         # Mock results: pull requests for RISR repository.
         # pylint: disable=line-too-long
-        mock_results.return_value = [
-            {
-                "resourcePath": "/googleinterns/risr/pull/1",
-                "number": 1,
-                "createdAt": "2020-06-11T20:54:31Z",
-                "closedAt": "2020-06-12T19:36:08Z",
-                "deletions": 0,
-                "additions": 653,
-                "comments": {
-                    "totalCount": 0
-                },
-                "reviews": {
-                    "nodes": [{
-                        "body": "text1",
-                        "comments": {
-                            "totalCount": 3
-                        }
-                    }, {
-                        "body": "",
-                        "comments": {
-                            "totalCount": 1
-                        }
-                    }, {
-                        "body":
-                        "text2",
-                        "comments": {
-                            "totalCount": 2
-                        }
-                    }, {
-                        "body": "text3",
-                        "comments": {
-                            "totalCount": 2
-                        }
-                    }]
+        mock_results.return_value = {
+            "data": {
+                "repository": {
+                    "nameWithOwner": "googleinterns/risr",
+                    "pullRequests": {
+                        "nodes": [{
+                            "resourcePath": "/googleinterns/risr/pull/1",
+                            "number": 1,
+                            "createdAt": "2020-06-11T20:54:31Z",
+                            "closedAt": "2020-06-12T19:36:08Z",
+                            "deletions": 0,
+                            "additions": 653,
+                            "comments": {
+                                "totalCount": 0
+                            },
+                            "reviews": {
+                                "nodes": [{
+                                    "body": "text1",
+                                    "comments": {
+                                        "totalCount": 3
+                                    }
+                                }, {
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
+                                    }
+                                }, {
+                                    "body":
+                                    "text2",
+                                    "comments": {
+                                        "totalCount": 2
+                                    }
+                                }, {
+                                    "body": "text3",
+                                    "comments": {
+                                        "totalCount": 2
+                                    }
+                                }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {},
+                                    {},
+                                    {},
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    },
+                                    {},
+                                    {},
+                                    {}
+                                ]
+                            }
+                        }, {
+                            "resourcePath": "/googleinterns/risr/pull/2",
+                            "number": 2,
+                            "createdAt": "2020-06-12T22:01:36Z",
+                            "closedAt": "2020-06-24T16:30:31Z",
+                            "deletions": 48,
+                            "additions": 631,
+                            "comments": {
+                                "totalCount": 0
+                            },
+                            "reviews": {
+                                "nodes": [{
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
+                                    }
+                                }, {
+                                    "body":
+                                    "text4",
+                                    "comments": {
+                                        "totalCount": 0
+                                    }
+                                }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {},
+                                    {},
+                                    {},
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    },
+                                    {},
+                                    {},
+                                    {}
+                                ]
+                            }
+                        }, {
+                            "resourcePath": "/googleinterns/risr/pull/3",
+                            "number": 3,
+                            "createdAt": "2020-06-24T16:36:50Z",
+                            "closedAt": "2020-06-24T20:25:02Z",
+                            "deletions": 19,
+                            "additions": 61,
+                            "comments": {
+                                "totalCount": 1
+                            },
+                            "reviews": {
+                                "nodes": [{
+                                    "body": "text5",
+                                    "comments": {
+                                        "totalCount": 2
+                                    }
+                                }, {
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
+                                    }
+                                }, {
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 1
+                                    }
+                                }, {
+                                    "body": "",
+                                    "comments": {
+                                        "totalCount": 0
+                                    }
+                                }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {},
+                                    {},
+                                    {},
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    },
+                                    {},
+                                    {},
+                                    {}
+                                ]
+                            }
+                        }, {
+                            "resourcePath": "/googleinterns/risr/pull/4",
+                            "number": 4,
+                            "createdAt": "2020-06-26T22:26:47Z",
+                            "closedAt": None,
+                            "deletions": 32,
+                            "additions": 392,
+                            "comments": {
+                                "totalCount": 0
+                            },
+                            "reviews": {
+                                "nodes": []
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {},
+                                    {},
+                                    {},
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    },
+                                    {},
+                                    {},
+                                    {}
+                                ]
+                            }
+                        }]
+                    }
                 }
-            }, {
-                "resourcePath": "/googleinterns/risr/pull/2",
-                "number": 2,
-                "createdAt": "2020-06-12T22:01:36Z",
-                "closedAt": "2020-06-24T16:30:31Z",
-                "deletions": 48,
-                "additions": 631,
-                "comments": {
-                    "totalCount": 0
-                },
-                "reviews": {
-                    "nodes": [{
-                        "body": "",
-                        "comments": {
-                            "totalCount": 1
-                        }
-                    }, {
-                        "body":
-                        "text4",
-                        "comments": {
-                            "totalCount": 0
-                        }
-                    }]
-                }
-            }, {
-                "resourcePath": "/googleinterns/risr/pull/3",
-                "number": 3,
-                "createdAt": "2020-06-24T16:36:50Z",
-                "closedAt": "2020-06-24T20:25:02Z",
-                "deletions": 19,
-                "additions": 61,
-                "comments": {
-                    "totalCount": 1
-                },
-                "reviews": {
-                    "nodes": [{
-                        "body": "text5",
-                        "comments": {
-                            "totalCount": 2
-                        }
-                    }, {
-                        "body": "",
-                        "comments": {
-                            "totalCount": 1
-                        }
-                    }, {
-                        "body": "",
-                        "comments": {
-                            "totalCount": 1
-                        }
-                    }, {
-                        "body": "",
-                        "comments": {
-                            "totalCount": 0
-                        }
-                    }]
-                }
-            }, {
-                "resourcePath": "/googleinterns/risr/pull/4",
-                "number": 4,
-                "createdAt": "2020-06-26T22:26:47Z",
-                "closedAt": None,
-                "deletions": 32,
-                "additions": 392,
-                "comments": {
-                    "totalCount": 0
-                },
-                "reviews": {
-                    "nodes": []
-                }
-            }]
+            }
+        }
 
         pr_stats_path = "data/test_pr_stats.csv"
 
@@ -165,6 +309,7 @@ class PrStatsTest(unittest.TestCase):
             for i, row in enumerate(reader, 1):
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
                 self.assertEqual(row["pr_number"], i)
+                self.assertEqual(row["start_date"], "05/12/2020")
         os.remove(pr_stats_path)
 
 
