@@ -17,12 +17,12 @@
 
 import os
 import json
-import pandas as pd
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.conf import settings
 
+import pandas as pd
 
 @api_view(['GET'])
 def dashboard_list(request):
