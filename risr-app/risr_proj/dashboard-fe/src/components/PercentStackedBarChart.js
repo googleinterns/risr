@@ -36,7 +36,7 @@ const height = 400;
  * Bar chart component. Currently only supports data for the capstone repository
  * pull request counts.
  */
-class BarChart extends Component {
+class PercentStackedBarChart extends Component {
   /**
    *  Constructor to initialize local state.
    *  @param {props} props
@@ -117,12 +117,12 @@ class BarChart extends Component {
       const categoryName = d3.select(this.parentNode).datum().key;
       const categoryValue = d.data[categoryName];
       tooltip
-        .html('category: ' + categoryName + '<br>' + 'count: ' + categoryValue)
+        .html('category: ' + categoryName + '<br> count: ' + categoryValue)
         .style('opacity', 1);
     };
     const mousemove = function (d) {
       tooltip
-        .style('left', d3.event.pageX + 20 + 'px') // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+        .style('left', d3.event.pageX + 20 + 'px')
         .style('top', d3.event.pageY + 'px');
     };
     const mouseleave = function (d) {
@@ -217,8 +217,8 @@ class BarChart extends Component {
   }
 
   /**
-   * Renders the bar chart component using information stored in the local
-   * state.
+   * Renders the stacked bar chart component using information passed in via
+   * the component props.
    * @return {object} React element that describes what to render.
    */
   render() {
@@ -237,8 +237,8 @@ class BarChart extends Component {
   }
 }
 
-BarChart.propTypes = {
+PercentStackedBarChart.propTypes = {
   data: PropTypes.array,
 };
 
-export default BarChart;
+export default PercentStackedBarChart;
