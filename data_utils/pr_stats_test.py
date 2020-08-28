@@ -286,6 +286,7 @@ class PrStatsTest(unittest.TestCase):
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
                 self.assertEqual(row["pr_number"], i)
                 self.assertEqual(row["start_date"], "05/12/2020")
+                self.assertEqual(row["review_count"], 2)
         os.remove(pr_stats_path)
 
 
