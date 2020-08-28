@@ -27,14 +27,12 @@ class QueryTest(unittest.TestCase):
         for the Github Personal Access Token is not set. """
         cur_github_pat = os.getenv("GITHUB_PAT")
         os.environ["GITHUB_PAT"] = ""
-        with self.assertRaises(Exception):
-            query.run_query("")
+        self.assertEqual(query.run_query(""), [])
         os.environ["GITHUB_PAT"] = cur_github_pat
 
     def test_run_query_error(self):
         """ Test to check if incorrect queries get an error JSON object. """
-        with self.assertRaises(Exception):
-            query.run_query("")
+        self.assertEqual(query.run_query(""), [])
 
     def test_run_query_repository(self):
         """ Test to get the googleinterns risr repository. """

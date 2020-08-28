@@ -15,14 +15,16 @@
 """ Module for sending a request to the Github API. """
 
 import os
+from time import sleep
 import requests
 
 
-def run_query(query):
+def run_query(query, attempt=1):
     """Sends request to Github GraphQL API v4.
 
     Args:
         query: A string containing the query.
+        attempt: The number of attempts to send request for a particular query.
 
     Returns:
         JSON. A JSON object containing the results of the query.
@@ -50,8 +52,17 @@ def run_query(query):
     if request.status_code == requests.codes.ok:
         result = request.json()
         if "errors" in result.keys():
-            raise Exception("There was an error in the Github API query.",
-                            result)
+            print("There was an error in the Github API query.",
+                  result)
+            return []
         return result
 
-    raise Exception("Request to Github GraphQL API failed.")
+    # Try to send request again in case it failed due to rate limiting.
+    if (attempt == 1 and
+            (request.status_code == requests.codes.forbidden
+             or request.status_code == requests.codes.bad_gateway)):
+        sleep(1)
+        print(f"Request status code: {request.status_code}. Trying again.")
+        run_query(query, 2)
+    print("Request to Github GraphQL API failed.", request)
+    return []

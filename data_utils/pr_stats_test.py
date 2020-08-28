@@ -15,6 +15,7 @@
 """ Tests for the pr_stats module. """
 
 import csv
+from datetime import datetime
 import os
 import sys
 import unittest
@@ -25,18 +26,59 @@ import pr_stats
 class PrStatsTest(unittest.TestCase):
     """ Repos test class. """
 
-    def test_get_stats_no_args(self):
-        """ Test to check if missing arguments will raise exception. """
-        sys.argv = ["repos.py"]
-        with self.assertRaises(Exception):
-            pr_stats.main()
-
     def test_get_comments_no_file(self):
         """ Test to check if unsupported arguments will raise exception. """
         sys.argv = ["repos.py", "repo_type"]
         self.assertFalse(os.path.isfile("data/repo_type.csv"))
         with self.assertRaises(Exception):
             pr_stats.main()
+
+    def test_calculate_week(self):
+        """ Test to check that weeks are calculated correctly. """
+        start_date1 = "05/12/2020"
+        created_date1 = datetime.strptime("05/12/2020", "%m/%d/%Y")
+        week1 = pr_stats.calculate_week(start_date1, created_date1)
+        self.assertEqual(week1, 1)
+
+        start_date2 = "05/12/2020"
+        created_date2 = datetime.strptime("05/18/2020", "%m/%d/%Y")
+        week2 = pr_stats.calculate_week(start_date2, created_date2)
+        self.assertEqual(week2, 1)
+
+        start_date3 = "05/12/2020"
+        created_date3 = datetime.strptime("05/19/2020", "%m/%d/%Y")
+        week3 = pr_stats.calculate_week(start_date3, created_date3)
+        self.assertEqual(week3, 2)
+
+
+    def test_get_start_date(self):
+        """ Test to check if start dates are found correctly based on
+            participants. """
+        participants = [
+            {
+                "login": "user1"
+            },
+            {
+                "login": "user2"
+            },
+            {
+                "login": "user3"
+            }
+        ]
+
+        host_dict = dict()
+        repo_dates = dict()
+        repo = "test_repo"
+        start_date = pr_stats.get_start_date(
+            participants, host_dict, repo_dates, repo)
+        self.assertEqual(start_date, "unknown")
+
+        host_dict["user3"] = "05/12/2020"
+        start_date = pr_stats.get_start_date(
+            participants, host_dict, repo_dates, repo)
+        self.assertEqual(start_date, "05/12/2020")
+        self.assertEqual(repo_dates[repo], "05/12/2020")
+
 
     @patch("pr_stats.get_pr_stats")
     def test_get_pr_stats(self, mock_results):
@@ -52,6 +94,7 @@ class PrStatsTest(unittest.TestCase):
         mock_results.return_value = {
             "data": {
                 "repository": {
+                    "nameWithOwner": "googleinterns/risr",
                     "pullRequests": {
                         "nodes": [{
                             "resourcePath": "/googleinterns/risr/pull/1",
@@ -65,8 +108,7 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "reviews": {
                                 "nodes": [{
-                                    "body":
-                                    "I'm inclined to say don't store the CSVs in GitHub -- just keep them local-only, especially if you can generate them decently quickly on the fly.\r\n\r\nIf they take a while to generate, let's talk about it.",
+                                    "body": "text1",
                                     "comments": {
                                         "totalCount": 3
                                     }
@@ -77,16 +119,32 @@ class PrStatsTest(unittest.TestCase):
                                     }
                                 }, {
                                     "body":
-                                    "much easier to read. Just remember to have a blank line at the end of files -- if you can get the linter up and running that'll be caught during the travis check.",
+                                    "text2",
                                     "comments": {
                                         "totalCount": 2
                                     }
                                 }, {
-                                    "body": "LGTM; just fix a couple nits.",
+                                    "body": "text3",
                                     "comments": {
                                         "totalCount": 2
                                     }
                                 }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    }
+                                ]
                             }
                         }, {
                             "resourcePath": "/googleinterns/risr/pull/2",
@@ -106,11 +164,27 @@ class PrStatsTest(unittest.TestCase):
                                     }
                                 }, {
                                     "body":
-                                    "The .pylintrc is aggro, but I'm fine with refactoring it if needed when it comes up.",
+                                    "text4",
                                     "comments": {
                                         "totalCount": 0
                                     }
                                 }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    }
+                                ]
                             }
                         }, {
                             "resourcePath": "/googleinterns/risr/pull/3",
@@ -124,7 +198,7 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "reviews": {
                                 "nodes": [{
-                                    "body": "tests?",
+                                    "body": "text5",
                                     "comments": {
                                         "totalCount": 2
                                     }
@@ -144,6 +218,22 @@ class PrStatsTest(unittest.TestCase):
                                         "totalCount": 0
                                     }
                                 }]
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    }
+                                ]
                             }
                         }, {
                             "resourcePath": "/googleinterns/risr/pull/4",
@@ -157,6 +247,22 @@ class PrStatsTest(unittest.TestCase):
                             },
                             "reviews": {
                                 "nodes": []
+                            },
+                            "participants": {
+                                "nodes": [
+                                    {"host1": "05/12/2020"}
+                                ]
+                            },
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "state": "CHANGES_REQUESTED"
+                                    },
+                                    {},
+                                    {
+                                        "state": "APPROVED"
+                                    }
+                                ]
                             }
                         }]
                     }
@@ -179,6 +285,8 @@ class PrStatsTest(unittest.TestCase):
             for i, row in enumerate(reader, 1):
                 self.assertTrue("/googleinterns/risr/pull/" in row["pr_path"])
                 self.assertEqual(row["pr_number"], i)
+                self.assertEqual(row["start_date"], "05/12/2020")
+                self.assertEqual(row["review_count"], 2)
         os.remove(pr_stats_path)
 
 
