@@ -88,7 +88,7 @@ def calculate_week(start_date, created_date):
     """
     start_date = datetime.strptime(start_date, "%m/%d/%Y")
     days = abs(created_date - start_date).days
-    return days // 7 + 1
+    return (days // 7) + 1
 
 
 def get_start_date(participants, host_dict, repo_dates, repo):

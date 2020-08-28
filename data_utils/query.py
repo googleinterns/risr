@@ -24,6 +24,7 @@ def run_query(query, attempt=1):
 
     Args:
         query: A string containing the query.
+        attempt: The number of attempts to send request for a particular query.
 
     Returns:
         JSON. A JSON object containing the results of the query.
