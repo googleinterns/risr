@@ -22,11 +22,11 @@
 import React, {Component} from 'react';
 import * as d3 from 'd3';
 import PropTypes from 'prop-types';
-import {CHART_WIDTH, CHART_HEIGHT} from '../constants/index';
+import * as Constants from '../constants/index';
 
 // Set the dimensions and margins of the graph
-const width = CHART_WIDTH;
-const height = CHART_HEIGHT;
+const width = Constants.CHART_WIDTH;
+const height = Constants.CHART_HEIGHT;
 const margin = {
   top: 30,
   right: 30,
@@ -50,8 +50,8 @@ class PercentStackedBarChart extends Component {
       // Helper functions for d3.
       xScale: d3
         .scaleBand()
-        .range([margin.left, width - margin.right - 50])
-        .padding(0.2),
+        .range([margin.left, width - margin.right - Constants.LEGEND_OFFSET])
+        .padding(Constants.XSCALE_PADDING),
       yScale: d3
         .scaleLinear()
         .range([height - margin.bottom, margin.top])
@@ -123,7 +123,7 @@ class PercentStackedBarChart extends Component {
     };
     const mousemove = function(d) {
       tooltip
-        .style('left', d3.event.pageX + 20 + 'px')
+        .style('left', d3.event.pageX + Constants.TOOLTIP_LEFT + 'px')
         .style('top', d3.event.pageY + 'px');
     };
     const mouseleave = function(d) {
@@ -162,22 +162,22 @@ class PercentStackedBarChart extends Component {
       .append('g')
       .attr('class', 'legend')
       .attr('transform', function(d, i) {
-        return 'translate(0,' + i * 20 + ')';
+        return 'translate(0,' + i * Constants.LEGEND_GAP + ')';
       })
       .style('font', '10px sans-serif');
 
     legend
       .append('rect')
-      .attr('x', width - 18)
-      .attr('width', 18)
-      .attr('height', 18)
+      .attr('x', width - Constants.LEGEND_SQUARE_SIZE)
+      .attr('width', Constants.LEGEND_SQUARE_SIZE)
+      .attr('height', Constants.LEGEND_SQUARE_SIZE)
       .attr('fill', colors);
 
     legend
       .append('text')
-      .attr('x', width - 24)
-      .attr('y', 9)
-      .attr('dy', '.35em')
+      .attr('x', width - Constants.LEGEND_TEXT_START)
+      .attr('y', Constants.LEGEND_SQUARE_SIZE / 2)
+      .attr('dy', Constants.LEGEND_SIZE)
       .attr('text-anchor', 'end')
       .text(function(d) {
         return d;
@@ -226,7 +226,7 @@ class PercentStackedBarChart extends Component {
    */
   render() {
     return (
-      <div ref={this.divRef} style={{padding: '20px'}}>
+      <div ref={this.divRef} style={{padding: Constants.CHART_PADDING + 'px'}}>
         <svg ref={this.chartRef} width={width} height={height}>
           <g ref={this.barRef} />
           <g
