@@ -26,7 +26,7 @@ jest.mock('axios');
 describe('Home component', () => {
   test('renders a bar chart component', async () => {
     const resData = {
-      data: '[{"test": "0"}]',
+      data: '{"bar_data": [{"test": "0"}], "stacked_data": [{"test": "1"}]}',
     };
     const spy = jest.spyOn(Home.prototype, 'componentDidMount');
     axios.get.mockImplementation(() => Promise.resolve(resData));
@@ -37,10 +37,10 @@ describe('Home component', () => {
 
   test('updates state with data from the API', async () => {
     const resData = {
-      data: '[{"pr_range": "0-1", "repo_count": 136}]',
+      data: '{"bar_data": [{"test": "0"}], "stacked_data": [{"test": "1"}]}',
     };
     axios.get.mockImplementation(() => Promise.resolve(resData));
-    const stateData = [{pr_range: '0-1', repo_count: 136}];
+    const stateData = {bar_data: [{test: '0'}], stacked_data: [{test: '1'}]};
     const shallowHome = await mount(<Home />);
     expect(axios.get).toHaveBeenCalledWith(API_URL);
     expect(shallowHome.state('data')).toEqual(stateData);
@@ -49,9 +49,7 @@ describe('Home component', () => {
   test('catches errors from API request', async () => {
     const errorMessage = 'Request error';
     jest.spyOn(console, 'log').mockImplementation();
-    axios.get.mockImplementation(() =>
-      Promise.reject(new Error(errorMessage)),
-    );
+    axios.get.mockImplementation(() => Promise.reject(new Error(errorMessage)));
     const shallowHome = await mount(<Home />);
     expect(shallowHome.state('data')).toEqual([]);
   });

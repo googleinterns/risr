@@ -21,9 +21,10 @@
 import React, {Component} from 'react';
 import * as d3 from 'd3';
 import PropTypes from 'prop-types';
+import {CHART_WIDTH, CHART_HEIGHT} from '../constants/index';
 
-const width = 650;
-const height = 400;
+const width = CHART_WIDTH;
+const height = CHART_HEIGHT;
 const margin = {
   top: 40,
   right: 5,
@@ -137,14 +138,16 @@ class BarChart extends Component {
    */
   render() {
     return (
-      <svg ref={this.chartRef} width={width} height={height}>
-        <g ref={this.barRef} />
-        <g
-          ref={this.xAxisRef}
-          transform={`translate(0, ${height - margin.bottom})`}
-        />
-        <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
-      </svg>
+      <div style={{padding: '20px'}}>
+        <svg ref={this.chartRef} width={width} height={height}>
+          <g ref={this.barRef} />
+          <g
+            ref={this.xAxisRef}
+            transform={`translate(0, ${height - margin.bottom})`}
+          />
+          <g ref={this.yAxisRef} transform={`translate(${margin.left}, 0)`} />
+        </svg>
+      </div>
     );
   }
 }

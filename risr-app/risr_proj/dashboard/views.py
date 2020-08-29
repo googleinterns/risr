@@ -16,13 +16,13 @@
 """ Module that defines different views for the dashboard app."""
 
 import os
-import csv
 import json
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.conf import settings
 
+import pandas as pd
 
 @api_view(['GET'])
 def dashboard_list(request):
@@ -37,13 +37,14 @@ def dashboard_list(request):
         A rest_framework.Response instance containing the data, if any.
     """
     if request.method == 'GET':
-        with open(os.path.join(settings.BASE_DIR, 'data/cap_pr_count.csv')) as csv_in:
-            reader = csv.DictReader(csv_in)
-            data = []
-            for row in reader:
-                data.append({
-                    'pr_range': row['pr_range'],
-                    'repo_count': int(row['repo_count'])
-                })
+        dataframe = pd.read_csv(
+            os.path.join(settings.BASE_DIR, 'data/bar_chart.csv'))
+        bar_data = dataframe.to_dict(orient='records')
+
+        dataframe = pd.read_csv(
+            os.path.join(settings.BASE_DIR, 'data/comment_categories.csv'))
+        stacked_data = dataframe.to_dict(orient='records')
+        data = {'bar_data': bar_data, 'stacked_data': stacked_data}
+        print(json.dumps(data))
         return Response(json.dumps(data))
     return Response()
